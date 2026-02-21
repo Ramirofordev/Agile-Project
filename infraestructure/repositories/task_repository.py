@@ -1,9 +1,10 @@
-class TaskRepository:
-    def __init__(self, db):
-        self.db = db
+from domain.task import Task
+from infraestructure.db import db
 
+class TaskRepository:
     def add(self, task):
-        pass
+        db.session.add(task)    
+        db.session.commit()
 
     def get_all(self):
-        pass
+        return Task.query.all()
