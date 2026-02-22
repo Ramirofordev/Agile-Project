@@ -1,9 +1,10 @@
 # Definition of Done
 
-A history is considered finish when:
+A user story is considered completed when:
 
-- The code works efficienly 
-- It doesn't break existent functionalities
-- It's documented
-- Meets evaluation criteria
-- It's in the repository 
+- The functionality works correctly
+- All aceptance criteria are met
+- It does not break existing features 
+- The code is comitted and pushed to the repository
+- Basic manual testing has been performed 
+- Documentation is updated

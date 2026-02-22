@@ -1,23 +1,38 @@
 # User Stories
 
-## US-01 Create a task
+---
 
-As a user
+## US-01 - Create a task
 
-I want to be able to create a new task
-
-To organize my activities
-
-Acceptance requirements:
-- It must have a title
-- It must get into the DataBase
-- It must be seen in the list
+**As a** user
+**I want** to create a new task
+**So that** I can organize my activities
 
 ---
 
 ## US-02 - Edit a task
-As a user
 
-I want to edit a existing task
+**As a** user
+**I want** to edit an existing task
+**So that** I can update incorrect or outdated information
 
-To update correct information
+---
+
+## US-03 - Delete a task
+
+**As a** user
+**I want** to delete an existing task
+**So that** I can delete a completed task
+
+## US-04 - Complete a task
+
+**As a** user
+**I want** to mark as complete an existing task
+**So that** I can check which tasks I have completed
+
+---
+
+## Acceptance criteria: 
+- The task must include a title (required)
+- The task must be stored in the database
+- The task must be displayed in the task list

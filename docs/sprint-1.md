@@ -1,16 +1,24 @@
 # Sprint 1
 
-Duration: 1 week 
+## Duration
+1 week
 
-## Sprint's Objective
-Implement the basic creation functionality and visualization of tasks
+## Sprint Goal
+Implement basic task and task visualization functionality.
 
-# Select History 
-- US-01
-- US-04
+---
+
+# Selected User Stories
+- US-01 - Create a Task
+- US-02 - Edit a Task
+- US-04 - Mark Task as Complete
+
+---
 
 ## Technical tasks
-- Create a model Task
-- Create a repository
-- Create a service
-- Create a view in Flask
+- Create Task model
+- Implement Task repository
+- Implement Task service
+- Create Flask routes
+- Create HTML templates
+- Connect database
