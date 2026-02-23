@@ -14,7 +14,7 @@ Implement task lifecycle management with controlled state transitions and automa
 
 ## Select User Stories
 - US-03 - Delete a Task
-- US-04 - Controlled status transitions (Jira-Syle workflow)
+- US-04 - Controlled status transitions (Jira-style workflow)
 
 ---
 
@@ -34,14 +34,15 @@ Implement a Jira-style workflow with controlled transitions
 - doing
 - done
 
-### Allowed transitions
+#### Allowed transitions
 - todo -> doing
 - doing -> done
 - done -> doing
 
-### Restricted transitions
+#### Restricted transitions
 - todo -> done
 - done -> todo
+
 All transitions rules are enforced in the Service Layer
 
 ---
@@ -68,7 +69,7 @@ All tests:
 - Run with pytest
 - Use SQLite in-memory database
 - Do not affect production database
-- Pass succesfully 
+- Pass successfully 
 
 ---
 
@@ -80,7 +81,7 @@ The application maintains a clean separation of concerns:
 - TaskModel (Domain Layer) - Represents the task entity
 
 Principles applied:
-- Single Responsability Principle
+- Single Responsibility Principle
 - Separation of Concerns
 - Clean Architecture approach
 - Controlled business rules enforcement
@@ -91,5 +92,5 @@ Principles applied:
 At the end of Sprint 2, the application:
 - Supports full task lifecycle management
 - Implements a controlled Jira-syle workflow
-- Is proyected by automated unit tests
+- Is protected by automated unit tests
 - Is architecture prepared for UI and UX improvements in Sprint 3
