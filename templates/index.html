@@ -16,9 +16,10 @@
 
     {% for task in tasks %}
         <div>
-            <strong>{{ task.title }}</strong>
-            <p>{{ task.description }}</p>
+            <strong>{{ task.title }}</strong><br>
+            <p>{{ task.description }}</p><br>
             <hr>
+            <a href = "{{ url_for('edit_task_form', task_id = task.id) }}"><button>Edit</button></a>
         </div>
     {% endfor %}
 </body>

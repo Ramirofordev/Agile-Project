@@ -33,5 +33,23 @@ def add_task():
 
     return redirect(url_for("index"))
 
+@app.route("/edit/<int:task_id>")
+def edit_task_form(task_id):
+    task = task_service.get_task(task_id)
+
+    if not task:
+        return redirect(url_for("index"))
+    
+    return render_template("edit.html", task = task)
+
+@app.route("/edit/<int:task_id>", methods = ["POST"])
+def edit_task(task_id):
+    title = request.form["title"]
+    description = request.form["description"]
+
+    task_service.edit_task(task_id, title, description)
+
+    return redirect(url_for("index"))
+
 if __name__ == "__main__":
     app.run(debug = True)

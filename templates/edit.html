@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Task</title>
+</head>
+<body>
+    <h2>Edit Task</h2>
+
+    <form method = "post">
+        <label>Title:</label><br>
+        <input type = "text" name = "title" value = "{{ task.title }}" required><br><br>
+
+        <label>Description:</label><br>
+        <textarea name = "description">{{ task.description }}</textarea><br><br>
+
+        <button type = "submit">Save Changes</button>
+    </form>
+
+    <br>
+    <a href = "{{ url_for('index') }}"><button>Back</button></a>
+</body>
+</html>
