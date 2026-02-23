@@ -4,9 +4,14 @@ from services.task_service import TaskService
 
 task_service = TaskService()
 
-def create_app():
+def create_app(test_config = None):
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///kanban.db"
+
+    if test_config:
+        app.config.update(test_config)
+    else:  
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///kanban.db"
+        
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
@@ -49,6 +54,16 @@ def edit_task(task_id):
 
     task_service.edit_task(task_id, title, description)
 
+    return redirect(url_for("index"))
+
+@app.route("/delete/<int:task_id>", methods = ["POST"])
+def delete_task(task_id):
+    task_service.delete_task(task_id)
+    return redirect(url_for("index"))
+
+@app.route("/status/<int:task_id>/<string:new_status>", methods = ["POST"])
+def change_status(task_id, new_status):
+    task_service.change_status(task_id, new_status)
     return redirect(url_for("index"))
 
 if __name__ == "__main__":

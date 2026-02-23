@@ -12,15 +12,52 @@
         <button type = "submit">Add</button> 
     </form>
 
-    <h2>To Do</h2>
+    <div class = "kanban-board">
+        <div class = "column">
+            <h2>To Do</h2>
+            {% for task in tasks if task.status == "todo" %}
+            <div class = "task-card">
+                <h3>{{ task.title }}</h3>
+                <p>{{ task.description }}</p>
 
-    {% for task in tasks %}
-        <div>
-            <strong>{{ task.title }}</strong><br>
-            <p>{{ task.description }}</p><br>
-            <hr>
-            <a href = "{{ url_for('edit_task_form', task_id = task.id) }}"><button>Edit</button></a>
+                <form action = "/status{{ task.id }}/doing" method = "post">
+                    <button type = "submit">Start</button>
+                </form>
+
+                <form action = "/delete{{ task.id }}" method = "post">
+                    <button type = "submit">Delete</button>
+                </form>
+            </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+
+        <div class = "column">
+            <h2>Doing</h2>
+            {% for task in tasks if task.status == "doing" %}
+            <div class = "task-card">
+                <h3>{{ task.title }}</h3>
+                <p>{{ task.description }}</p>
+
+                <form action = "/status/{{ task.id }}/done" method = "post">
+                    <button type = "submit">Finish</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class = "column">
+            <h2>Done</h2>
+            {% for task in tasks if task.status == "done" %}
+            <div class = "task-card">
+                <h3>{{ task.title }}</h3>
+                <p>{{ task.description }}</p>
+
+                <form action = "/status/{{ task.id }}/doing" method = "post">
+                    <button type = "submit">Reopen</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>

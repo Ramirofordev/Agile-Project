@@ -24,11 +24,20 @@
 **I want** to delete an existing task
 **So that** I can delete a completed task
 
-## US-04 - Complete a task
+## US-04 - Change task status
 
 **As a** user
-**I want** to mark as complete an existing task
-**So that** I can check which tasks I have completed
+**I want** to change the status of a task
+**So that** I can track progress
+
+---
+
+
+## US-05 - Improve UI to Kanban Board
+
+**As a** user
+**I want** a Kanban-style board
+**So that** I can visualize tasks by status
 
 ---
 
