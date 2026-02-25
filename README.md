@@ -168,6 +168,10 @@ Test use an insolated in-memory SQLite database to prevent affecting production 
 
 --- 
 
+## Application Demo
+
+![Kanban Demo](demo.gif)
+
 ## Author
 
 Developed by **Jose Ignacio Ramiro Castro**
