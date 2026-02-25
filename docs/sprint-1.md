@@ -1,7 +1,7 @@
 # Sprint 1
 
 ## Duration
-1 week
+1 day
 
 ---
 

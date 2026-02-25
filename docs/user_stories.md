@@ -58,13 +58,47 @@
 
 ---
 
-## US-05 - Improve UI to Kanban Board
+## US-05 - Kanban Board Visualization
 
-**As a** user
-**I want** a Kanban-style board
-**So that** I can visualize tasks by status
+**As a** user 
+**I want** to see my tasks organized in a Kanban-style board
+**So that** I can visualize work progress crearly
 
 #### Acceptance Criteria:
-- Tasks must be grouped by state
+- Tasks must be grouped by state:
+    - todo
+    - doing 
+    - done
 - Each state must be displayed in a separate column 
-- Status updates must reflect visually
+- Tasks must appear automatically in the correct column 
+- Status change must visually move the task between columns
+- UI must not break existing lifecycle rules
+
+---
+
+## US-06 - Improve Visual Status Feedback
+
+**As a** user
+**I want** visual differentiation between tasks states
+**So that** I can quickly understand progress
+
+#### Acceptance Criteria:
+- Each column must have clear visual labering
+- Status buttons must be clearly displayed
+- Status transitions must reflect immediately in UI
+- Invalid transitions must show clear feedback messages
+
+---
+
+## US-07 - Improve UX for Status Actions
+
+**As a** user
+**I want** intituive controls to move tasks
+**So that** interaction feels similar to Jira
+
+#### Acceptance Criteria:
+- Buttons available only to move tasks
+- UI must not show invalid transitions
+- Backend still validates rules (defensive programming)
+- Delete button only visible in DONE column
+- Confirmation required before deletion

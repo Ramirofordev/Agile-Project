@@ -27,7 +27,7 @@ app = create_app()
 @app.route("/")
 def index():
     tasks = task_service.list_tasks()
-    return render_template("index.html", tasks = tasks)
+    return render_template("board.html", tasks = tasks)
 
 @app.route("/add", methods = ["POST"])
 def add_task():

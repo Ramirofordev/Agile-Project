@@ -3,7 +3,7 @@
 ---
 
 ## Duration
-1 week
+2 days
 
 ---
 

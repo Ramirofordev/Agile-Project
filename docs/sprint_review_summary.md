@@ -79,3 +79,47 @@ Sprint 3 will focus on:
 - Improving user experience
 - Enchacing UI interaction
 - Refining status change visual feedback
+
+---
+
+# Sprint 3 Review
+
+### Sprint Goal
+Improve Kanban board visualization and user interaction without modifying business logic.
+
+### Delivered Increment
+
+At the end of Sprint 3, the system:
+
+- Displays tasks in a professional Kanban board layout
+- Groups tasks dynamically by status
+- Shows task counters per column
+- Restricts delete option to DONE tasks only
+- Includes confirmation before deletion
+- Uses Bootstrap 5 for enchanced UI layout
+- Maintains controlled workflow validation
+
+### Validation
+
+- Manual testing performed for:
+    - Task creation
+    - Status transitions
+    - Reopen flow
+    - Delete with confirmation
+- All previous automated tests still pass
+- No regression detected from Sprint 2
+
+### Feedback & Observations
+
+- System now provides clear visual workflow tracking
+- UI significantly improves user experience
+- Architecture separation proved scalable
+- Application now resembles real-world Kanban tools
+
+### Adaptation for Next Sprint
+
+Potential improvements:
+- Drag and drop transitions
+- Flash messages for invalid transitions
+- Task priority indicators
+- User authentication layer

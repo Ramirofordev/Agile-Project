@@ -20,7 +20,7 @@
                 <h3>{{ task.title }}</h3>
                 <p>{{ task.description }}</p>
 
-                <form action = "/status{{ task.id }}/doing" method = "post">
+                <form action = "/status/{{ task.id }}/doing" method = "post">
                     <button type = "submit">Start</button>
                 </form>
 
