@@ -88,14 +88,28 @@ Business rules are enforced exclusively in the Service Layer
 
 ---
 
+### 🟦 Sprint 4 - Authentication & Drag-and-Drop Interaction
+
+- Secure user registration and login (Flask-Login)
+- Password hashing using Werkzeug
+- Session-based authentication
+- Multi-user task isolation
+- Task ownership validation at Service Layer
+- Drag-and-Drop task transitions (SortableJS)
+- Controlled HTTP responses (204 / 404)
+- Backend workflow validation preserved
+- Additional automated tests for authentication and ownership
+
+---
+
 ## Architecture
 
 The system follows a clean layered architecture:
 
 - **Flask** -> Controller Layer
-- **TaskService** -> Business Logic Layer
-- **TaskRepository** -> Persistence Layer
-- **TaskModel** -> Domain Layer
+- **TaskService & Authservice** -> Business Logic Layer
+- **Respositories** -> Persistence Layer
+- **Domain Models (Task + User)** -> Domain Layer
 
 This ensures:
 
@@ -113,6 +127,8 @@ The application enforces a strict task lifecycle:
 - todo -> doing
 - doing -> done
 - done -> doing
+
+Drag-and-drop interactions do not bypass backend workflow validation.
 
 Invalid transitions are rejected at the Service level.
 
@@ -160,11 +176,13 @@ Test use an insolated in-memory SQLite database to prevent affecting production 
 
 ## Future Improvements
 
-- Drag-and-drop status transitions
-- Flash messages for invalid transitions
+- Role-based access control (Admin / User)
+- REST API endpoints
 - Task priority levels
-- User authentication
-- REST API version
+- Deployment configuration
+- Docker containerization
+- Pomodoro implementation
+- Visuals updated to look like pokemon
 
 --- 
 

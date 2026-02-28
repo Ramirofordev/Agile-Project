@@ -72,7 +72,7 @@ def create_app(test_config=None):
         if request.method == "POST":
             try:
                 user = auth_service.authenticate_user(
-                    request.form["email"],
+                    request.form["identifier"],
                     request.form["password"]
                 )
                 login_user(user)

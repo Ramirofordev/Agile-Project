@@ -28,19 +28,20 @@ class AuthService:
 
         return user
 
-    def authenticate_user(self, email: str, password: str):
+    def authenticate_user(self, identifier: str, password: str):
 
-        email = email.strip()
-        
-        user = self.user_repository.get_by_email(email)
+        """
+        Identifier can be either email or username
+        """
 
+        # Try email first
+        user = self.user_repository.get_by_email(identifier)
+
+        # if not found, try username
         if not user:
+            user = self.user_repository.get_by_username(identifier)
+
+        if not user or not check_password_hash(user.password_hash, password):
             raise ValueError("Invalid credentials")
-        
-        if not check_password_hash(user.password_hash, password):
-            raise ValueError("Invalid credentials")
-        
-        print("User found:", user)
-        print("Password hash:", user.password_hash if user else None)
         
         return user
