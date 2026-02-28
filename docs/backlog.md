@@ -17,3 +17,5 @@ Develop a task management web application using Agile methodology that allows us
 | US-05 | Kanban board visualization                | Medium   | 3      | Done     |
 | US-06 | Improve visual status feedback            | Medium   | 3      | Done     |
 | US-07 | Improve UX for status actions             | Medium   | 3      | Done     |
+| US-08 | User Authentication System                | High     | 4      | Done     |
+| US-09 | Drag and Drop task movement               | Medium   | 4      | Done     |

@@ -54,12 +54,12 @@
         <div class="col-md-4">
             <div class="card shadow-sm kanban-column">
                 <div class="card-header bg-primary text-white text-center">
-                    TODO ({{ tasks|selectattr("status", "equalto", "todo")|list|length }})
+                    TODO (<span class = "count">{{ tasks|selectattr("status", "equalto", "todo")|list|length }}</span>)
                 </div>
-                <div class="card-body">
+                <div class="card-body task-list" data-status = "todo">
 
                     {% for task in tasks if task.status == "todo" %}
-                    <div class="card mb-3 task-card shadow-sm">
+                    <div class="card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}">
                         <div class="card-body">
                             <h5>{{ task.title }}</h5>
 
@@ -67,9 +67,18 @@
                                 <p class="text-muted">{{ task.description }}</p>
                             {% endif %}
 
-                            <form action="/status/{{ task.id }}/doing" method="post" class="d-grid">
-                                <button class="btn btn-warning btn-sm">Start</button>
-                            </form>
+                            <div class = "button-container">
+
+                                <div class = "d-grid mb-2">
+                                    <a href = "/edit/{{ task.id }}" class = "btn btn-outline-primary btn-sm">
+                                        Edit
+                                    </a>
+                                </div>
+
+                                <form action="/status/{{ task.id }}/doing" method="post" class="d-grid">
+                                    <button class="btn btn-warning btn-sm">Start</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -82,12 +91,12 @@
         <div class="col-md-4">
             <div class="card shadow-sm kanban-column">
                 <div class="card-header bg-warning text-dark text-center">
-                    DOING ({{ tasks|selectattr("status", "equalto", "doing")|list|length }})
+                    DOING (<span class = "count">{{ tasks|selectattr("status", "equalto", "doing")|list|length }}</span>)
                 </div>
-                <div class="card-body">
+                <div class="card-body task-list" data-status = "doing">
 
                     {% for task in tasks if task.status == "doing" %}
-                    <div class="card mb-3 task-card shadow-sm">
+                    <div class="card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}">
                         <div class="card-body">
                             <h5>{{ task.title }}</h5>
 
@@ -95,9 +104,18 @@
                                 <p class="text-muted">{{ task.description }}</p>
                             {% endif %}
 
-                            <form action="/status/{{ task.id }}/done" method="post" class="d-grid">
-                                <button class="btn btn-success btn-sm">Complete</button>
-                            </form>
+                            <div class = "button-container">
+
+                                <div class = "d-grid mb-2">
+                                    <a href = "/edit/{{ task.id }}" class = "btn btn-outline-primary btn-sm">
+                                        Edit
+                                    </a>
+                                </div>
+
+                                <form action="/status/{{ task.id }}/done" method="post" class="d-grid">
+                                    <button class="btn btn-success btn-sm">Complete</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -110,12 +128,12 @@
         <div class="col-md-4">
             <div class="card shadow-sm kanban-column">
                 <div class="card-header bg-success text-white text-center">
-                    DONE ({{ tasks|selectattr("status", "equalto", "done")|list|length }})
+                    DONE (<span class = "count">{{ tasks|selectattr("status", "equalto", "done")|list|length }}</span>)
                 </div>
-                <div class="card-body">
+                <div class="card-body task-list" data-status = "done">
 
                     {% for task in tasks if task.status == "done" %}
-                    <div class="card mb-3 task-card shadow-sm">
+                    <div class="card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}">
                         <div class="card-body">
                             <h5>{{ task.title }}</h5>
 
@@ -123,15 +141,24 @@
                                 <p class="text-muted">{{ task.description }}</p>
                             {% endif %}
 
-                            <form action="/status/{{ task.id }}/doing" method="post" class="mb-2 d-grid">
-                                <button class="btn btn-secondary btn-sm">Reopen</button>
-                            </form>
+                            <div class = "button-container">
 
-                            <form action="/delete/{{ task.id }}" method="post"
-                                  onsubmit="return confirm('Are you sure you want to delete this task?')"
-                                  class="d-grid">
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                                <div class = "d-grid mb-2">
+                                    <a href = "/edit/{{ task.id }}" class = "btn btn-outline-primary btn-sm">
+                                        Edit
+                                    </a>
+                                </div>
+
+                                <form action="/status/{{ task.id }}/doing" method="post" class="mb-2 d-grid">
+                                    <button class="btn btn-secondary btn-sm">Reopen</button>
+                                </form>
+
+                                <form action="/delete/{{ task.id }}" method="post"
+                                    onsubmit="return confirm('Are you sure you want to delete this task?')"
+                                    class="d-grid">
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
 
                         </div>
                     </div>
@@ -143,6 +170,95 @@
 
     </div>
 </div>
+<script src = "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
+<script>
+    function updateTaskButton(taskElement, newStatus, taskId) {
+        let buttonContainer = taskElement.querySelector(".button-container");
+
+        if (!buttonContainer) return;
+
+        let html = `
+            <div class = "d-grid mb-2">
+                <a href = "/edit/${taskId}" class = "btn btn-outline-primary btn-sm">
+                    Edit
+                </a>
+            </div>
+        `;
+
+        if (newStatus === "todo") {
+            html += `
+                <form action = "/status/${taskId}/doing" method = "post" class = "d-grid">
+                    <button class = "btn btn-warning btn-sm">Start</button>
+                </form>
+            `;
+        }
+
+        if (newStatus === "doing") {
+            html += `
+                <form action = "/status/${taskId}/done" method = "post" class = "mb-2 d-grid">
+                    <button class = "btn btn-success btn-sm">Complete</button>
+                </form>
+            `; 
+        }
+
+        if (newStatus === "done") {
+            html += `
+                <form action = "/status/${taskId}/doing" method = "post" class = "mb-2 d-grid">
+                    <button class = "btn btn-secondary btn-sm">Reopen</button>
+                </form>
+                
+                <form action = "/delete/${taskId}" method = "post"
+                    onsubmit = "return confirm('Are you sure you want to delete this task?')"
+                    class = "d-grid">
+                    <button class = "btn btn-danger btn-sm">Delete</button>
+                </form>
+            `;
+        }
+
+        buttonContainer.innerHTML = html;
+    }
+
+    function updateCounters() {
+        document.querySelectorAll(".task-list").forEach(list => {
+            const count = list.querySelectorAll(".task-card").length;
+            const header = list.closest(".kanban-column")
+                                        .querySelector(".count");
+            header.textContent = count;
+        });
+    }
+
+    document.querySelectorAll(".task-list").forEach(list => {
+        new Sortable(list, {
+            group: "kanban",
+            animation: 150,
+
+            onEnd: function (evt) {
+                const taskId = evt.item.dataset.taskId;
+                const oldStatus = evt.from.dataset.status;
+                const newStatus = evt.to.dataset.status;
+
+                if (oldStatus === newStatus) {
+                    return;
+                }
+
+                fetch(`/status/${taskId}/${newStatus}`, {
+                    method: "POST"
+                }).then(response => {
+                    if (!response.ok) {
+
+                        evt.from.appendChild(evt.item);
+                        return;
+                        
+                    } 
+
+                    updateCounters();
+                    updateTaskButton(evt.item, newStatus, taskId)
+                });
+            }
+        });
+    });
+
+</script>
 </body>
 </html>

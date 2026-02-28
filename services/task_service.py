@@ -5,15 +5,15 @@ class TaskService:
     def __init__(self):
         self.repository = TaskRepository()
 
-    def create_task(self, title, description):
+    def create_task(self, title, description, user_id):
         # Validations
         if not title:
             raise ValueError("The task must have a title")
         
-        task = Task(title = title, description = description)
+        task = Task(title = title, description = description, user_id = user_id)
         self.repository.add(task)
 
-    def edit_task(self, task_id: int, new_title: str, new_description: str = None):
+    def edit_task(self, task_id: int, new_title: str, user_id: int, new_description: str = None):
         task = self.repository.get_by_id(task_id)
 
         if not task:
@@ -21,6 +21,9 @@ class TaskService:
         
         if not new_title or not new_title.strip():
             raise ValueError("The task must have a title")
+        
+        if task.user_id != user_id:
+            raise ValueError("Unauthorized action")
         
         task.title = new_title.strip()
 
@@ -31,20 +34,26 @@ class TaskService:
 
         return task
     
-    def delete_task(self, task_id: int):
+    def delete_task(self, task_id: int, user_id: int):
         task = self.repository.get_by_id(task_id)
         
         if not task:
             raise ValueError("Task not found")
+        
+        if task.user_id != user_id:
+            raise ValueError("Unauthorized action")
         
         return self.repository.delete_task(task_id)
 
     
-    def change_status(self, task_id: int, new_status: str):
+    def change_status(self, task_id: int, new_status: str, user_id: int):
         task = self.repository.get_by_id(task_id)
         
         if not task:
             raise ValueError("Task not found")
+        
+        if task.user_id != user_id:
+            raise ValueError("Unauthorized action")
         
         allowed_transitions = {
             "todo": ["doing"],
@@ -64,5 +73,5 @@ class TaskService:
     def get_task(self, task_id: int):
          return self.repository.get_by_id(task_id)
 
-    def list_tasks(self):
-        return self.repository.get_all()
+    def list_tasks(self, user_id):
+        return self.repository.get_all_by_user(user_id)

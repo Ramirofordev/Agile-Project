@@ -33,3 +33,6 @@ class TaskRepository:
 
     def get_all(self):
         return Task.query.all()
+    
+    def get_all_by_user(self, user_id: int):
+        return Task.query.filter_by(user_id = user_id).all()

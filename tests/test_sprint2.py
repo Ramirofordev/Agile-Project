@@ -1,6 +1,7 @@
 import pytest
 from services.task_service import TaskService
 from infraestructure.db import db
+from domain.user import User
 from app import create_app
 
 @pytest.fixture
@@ -19,34 +20,46 @@ def app():
 def service(app):
     return TaskService()
 
-def test_delete_task(service):
-    service.create_task("Task to delete", "")
-    task = service.list_tasks()[0]
+@pytest.fixture
+def test_user(app):
+    user = User(
+        username = "testuser",
+        email = "test@test.com",
+        password_hash = "fakehash"
+    )
 
-    service.delete_task(task.id)
+    db.session.add(user)
+    db.session.commit()
+    return user
 
-    tasks = service.list_tasks()
+def test_delete_task(service, test_user):
+    service.create_task("Task to delete", "", test_user.id)
+    task = service.list_tasks(test_user.id)[0]
+
+    service.delete_task(task.id, test_user.id)
+
+    tasks = service.list_tasks(test_user.id)
     assert len(tasks) == 0
 
-def test_valid_status_transition(service):
-    service.create_task("Task", "")
-    task = service.list_tasks()[0]
+def test_valid_status_transition(service, test_user):
+    service.create_task("Task", "", test_user.id)
+    task = service.list_tasks(test_user.id)[0]
 
     # todo -> doing
-    service.change_status(task.id, "doing")
+    service.change_status(task.id, "doing", test_user.id)
     updated = service.get_task(task.id) 
     assert updated.status == "doing"
 
     # doing -> done
-    service.change_status(task.id, "done")
+    service.change_status(task.id, "done", test_user.id)
     updated = service.get_task(task.id)
     assert updated.status == "done"
 
-def test_invalid_transition(service):
-    service.create_task("Task", "")
-    task = service.list_tasks()[0]
+def test_invalid_transition(service, test_user):
+    service.create_task("Task", "", test_user.id)
+    task = service.list_tasks(test_user.id)[0]
 
     # It doesn't allowed todo -> done directly
     with pytest.raises(ValueError):
-        service.change_status(task.id, "done")
+        service.change_status(task.id, "done", test_user.id)
 

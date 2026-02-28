@@ -123,3 +123,51 @@ Potential improvements:
 - Flash messages for invalid transitions
 - Task priority indicators
 - User authentication layer
+
+---
+
+# Sprint 4 Review
+
+### Sprint Goal
+Introduce secure user authentication and implement drag-and-drop task interaction while maintaining strict workflow validation and architectural integrity.
+
+### Delivered Increment
+
+At the end of Sprint 4, the system:
+
+- Supports user registration and login
+- Securely hashes user passwords
+- Restricts board access to authenticated users
+- Associates tasks with individual users
+- Enforces task ownership validation
+- Allows drag-and-drop task transitions
+- Maintains controlled workflow rules in the Service Layer
+- Preserves clean layered architecture
+
+### Validation
+
+- Authentication flows tested manually
+- Task ownership verified across operations
+- Drag-and-drop transitions validated against workflow rules
+- Previous unit tests continue to pass
+- No regression from previous sprints
+- Additional tests added for authentication and ownership validation
+- Invalid drag transitions handled without server crashes (400 controlled response)
+
+### Feedback & Observations
+
+- System security significantly improved
+- Application now supports multi-user environments
+- UX feels closer to real-world Kanban tools
+- Architecture proved scalable for new layers
+- Business logic remains protected and centralized  
+
+### Adaptation for Next Sprint
+
+Potential future improvements:
+
+- Flash messaging for authentication feedback
+- Password recovery funtionality
+- Role-based access control (Admin/User)
+- REST API endpoints for external integrations
+- Deployment configuration (production-ready setup )

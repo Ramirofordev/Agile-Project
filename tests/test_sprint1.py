@@ -1,6 +1,7 @@
 import pytest
 from services.task_service import TaskService
 from domain.task import Task
+from domain.user import User
 from infraestructure.db import db
 from app import create_app
 
@@ -21,18 +22,36 @@ def service(app):
     return TaskService()
 
 def test_create_task(service):
-    service.create_task("Test task", "Description")
+    user = User(
+        username = "test",
+        email = "test@test.com",
+        password_hash = "fakehash"
+    )
 
-    tasks = service.list_tasks()
+    db.session.add(user)
+    db.session.commit()
+
+    service.create_task("Test", "Desc", user.id)
+
+    tasks = service.list_tasks(user.id)
     assert len(tasks) == 1
-    assert tasks[0].title == "Test task"
+    assert tasks[0].title == "Test"
     assert tasks[0].status == "todo"
 
 def test_edit_task(service):
-    service.create_task("Old title", "Desc")
-    task = service.list_tasks()[0]
+    user = User(
+        username = "test",
+        email = "test@test.com",
+        password_hash = "fakehash"
+    )
 
-    service.edit_task(task.id, "New title", "New Desc")
+    db.session.add(user)
+    db.session.commit()
+
+    service.create_task("Old title", "Desc", user.id)
+    task = service.list_tasks(user.id)[0]
+
+    service.edit_task(task.id, "New title", user.id, "New Desc")
 
     updated = service.get_task(task.id)
     assert updated.title == "New title"

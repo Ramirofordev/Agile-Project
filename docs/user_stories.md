@@ -45,7 +45,7 @@
 
 **As a** user
 **I want** to change the status of a task following predefined rules
-**So that** I can track progress consistenly
+**So that** I can track progress consistently
 
 #### Acceptance Criteria:
 - Allowed states: todo, doing, done
@@ -62,7 +62,7 @@
 
 **As a** user 
 **I want** to see my tasks organized in a Kanban-style board
-**So that** I can visualize work progress crearly
+**So that** I can visualize work progress clearly
 
 #### Acceptance Criteria:
 - Tasks must be grouped by state:
@@ -93,7 +93,7 @@
 ## US-07 - Improve UX for Status Actions
 
 **As a** user
-**I want** intituive controls to move tasks
+**I want** intuitive controls to move tasks
 **So that** interaction feels similar to Jira
 
 #### Acceptance Criteria:
@@ -102,3 +102,38 @@
 - Backend still validates rules (defensive programming)
 - Delete button only visible in DONE column
 - Confirmation required before deletion
+
+---
+
+## US-08 - User Authentication System
+
+**As a** user
+**I want** to register and log into the system
+**So that** I can securely manage my own tasks
+
+#### Acceptance Criteria:
+- Users must be able to register with:
+    - username
+    - email
+    - password
+- Passwords must be securely hashed
+- Users must be able to log in
+- Only authenticated can access the kanban board
+- Users must only see their own tasks
+- Users must be able to log out
+- Authentication must not break existing task lifecycle logic
+
+---
+
+## US-09 - Drag and Drop Task Movement
+
+**As a** user
+**I want** to drag and drop tasks between Kanban columns
+**So that** task movement feels intuitive and modern
+
+#### Acceptance Criteria:
+- Task must be draggable
+- Tasks must only be dropped in valid columns
+- Backend must validate transitions (defensive programming)
+- Status must persist after page reload
+- UI must update without breaking existing transitions rules
