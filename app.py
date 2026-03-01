@@ -161,9 +161,112 @@ def create_app(test_config=None):
             return "", 204
         except ValueError:
             return "", 400
+        
+    # ----------------------
+    # REST API
+    # ----------------------
+
+    @app.route("/api/tasks", methods = ["GET"])
+    @login_required
+    def api_list_tasks():
+        tasks = task_service.list_tasks(current_user.id)
+
+        return jsonify([
+            {
+                "id": task.id,
+                "title": task.title,
+                "description": task.description,
+                "status": task.status
+            }
+            for task in tasks
+        ])
+    
+    @app.route("/api/tasks/<int:task_id>", methods = ["GET"])
+    @login_required
+    def api_get_task(task_id):
+        task = task_service.get_task(task_id)
+
+        if not task or task.user_id != current_user.id:
+            return jsonify({"error": "Task not found"}), 404
+        
+        return jsonify({
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "status": task.status
+        })
+    
+    @app.route("/api/tasks", methods = ["POST"])
+    @login_required
+    def api_create_task():
+        data = request.get_json()
+
+        if not data or "title" not in data:
+            return jsonify({"error": "Title is required"}), 400
+        
+        try:
+            task = task_service.create_task(
+                data["title"],
+                data.get("description", ""),
+                current_user.id
+            )
+
+            return jsonify({
+                "id": task.id,
+                "title": task.title,
+                "description": task.description,
+                "status": task.status
+            }), 201
+        
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+        
+    @app.route("/api/tasks/<int:task_id>", methods = ["PUT"])
+    @login_required
+    def api_update_task(task_id):
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Invalid JSON"}), 400
+        
+        try:
+            if "status" in data:
+                _, _ = task_service.change_status(
+                    task_id,
+                    data["status"],
+                    current_user.id
+                )
+
+            if "title" in data:
+                task_service.edit_task(
+                    task_id,
+                    data["title"],
+                    current_user.id,
+                    data.get("description", "")
+                )
+
+            task = task_service.get_task(task_id)
+            
+            return jsonify({
+                "id": task.id,
+                "title": task.title,
+                "description": task.description,
+                "status": task.status
+            })
+        
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+        
+    @app.route("/api/tasks/<int:task_id>", methods = ["DELETE"])
+    @login_required
+    def api_delete_task(task_id):
+        try:
+            task_service.delete_task(task_id, current_user.id)
+            return "", 204
+        except ValueError:
+            return jsonify({"error": "Task not found"}), 404
 
     return app
-
 
 # -------------------------
 # Run App
