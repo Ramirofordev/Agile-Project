@@ -1,9 +1,11 @@
 from domain.task import Task
 from infraestructure.repositories.task_repository import TaskRepository
+from services.pokemon_services import PokemonService
 
 class TaskService:
     def __init__(self):
         self.repository = TaskRepository()
+        self.pokemon_service = PokemonService()
 
     def create_task(self, title, description, user_id):
         # Validations
@@ -68,8 +70,16 @@ class TaskService:
                 f"Invalid transition from {current_status} to {new_status}"
             )
         
-        return self.repository.update_status(task_id, new_status)
-    
+        updated_task = self.repository.update_status(task_id, new_status)
+
+        new_pokemon = None
+
+        # If the task it's complete, give the pokemon
+        if new_status == "done":
+            new_pokemon = self.pokemon_service.assign_random_pokemon_to_user(user_id)
+
+        return updated_task, new_pokemon
+
     def get_task(self, task_id: int):
          return self.repository.get_by_id(task_id)
 

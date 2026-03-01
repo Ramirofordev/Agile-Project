@@ -137,3 +137,49 @@
 - Backend must validate transitions (defensive programming)
 - Status must persist after page reload
 - UI must update without breaking existing transitions rules
+
+---
+
+## US-10 - Task Priority System
+
+**As a** user
+**I want** to assign a priority level to my tasks
+**So that** I can identify what is more important 
+
+#### Acceptance Criteria:
+- Task must support priority: low, medium, high
+- Default priority: medium
+- Priority must persist in DB
+- Priority must be visible in Kanban Board
+- No change to workflow transitions
+
+---
+
+## US-11 - REST API for Tasks
+
+**As a** user
+**I want** REST endpoints
+**So that** external systems can interact with the application
+
+#### Acceptance Criteria:
+- GET /api/tasks
+- GET /api/tasks/<id>
+- POST /api/tasks
+- PUT /api/tasks/<id>
+- DELETE /api/tasks/<id>
+- Must reuse Service Layer
+- Must return JSON
+- Must validate transitions
+
+## US-12 - Pokemon Reward System
+
+**As a** user
+**I want** to receive a Pokemon when completing a Pomodoro
+**So that** productivity feels rewarding
+
+#### Acceptance Criteria:
+- Completing task via pomodoro triggers reward
+- App consumes Pokedex public API
+- A random Pokemon is assigned
+- Pokemon is displayed in UI
+- API failures handled gracefully

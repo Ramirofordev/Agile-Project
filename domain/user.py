@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(255), nullable = False)
 
     tasks = db.relationship("Task", backref= "owner", lazy = True)
+    pokemons = db.relationship("Pokemon", backref = "owner", lazy = True)
 
     def __repr__(self):
         return f"<User {self.username}>"

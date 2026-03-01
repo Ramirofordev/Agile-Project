@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from infraestructure.db import db
 from services.task_service import TaskService
@@ -44,7 +44,7 @@ def create_app(test_config=None):
     @login_required
     def index():
         tasks = task_service.list_tasks(current_user.id)
-        return render_template("board.html", tasks=tasks)
+        return render_template("board.html", tasks=tasks, user = current_user)
 
     # -------------------------
     # Authentication
@@ -150,7 +150,14 @@ def create_app(test_config=None):
     @login_required
     def change_status(task_id, new_status):
         try:
-            task_service.change_status(task_id, new_status, current_user.id)
+            _, new_pokemon = task_service.change_status(task_id, new_status, current_user.id)
+
+            if new_pokemon:
+                return jsonify({
+                    "pokemon_name": new_pokemon.name,
+                    "pokemon_sprite": new_pokemon.sprite_url
+                }), 200
+            
             return "", 204
         except ValueError:
             return "", 400
