@@ -293,10 +293,6 @@
                     return;
                 }
 
-                const sound = new Audio("{{ url_for('static', filename = 'sounds/capture.mp3') }}");
-                sound.volume = 1;
-                sound.play().catch(() => {});
-
                 fetch(`/status/${taskId}/${newStatus}`, {
                     method: "POST"
                 }).then( async response => {
@@ -308,7 +304,14 @@
                     
                     if (response.status === 200) {
                         const data = await response.json();
-                        showCaptureAnimation(data.pokemon_name, data.pokemon_sprite);
+                        
+                        if (data.pokemon_name) {
+                            const sound = new Audio("{{ url_for('static', filename = 'sounds/capture.mp3') }}");
+                            sound.volume = 1;
+                            sound.play().catch(() => {});
+                            
+                            showCaptureAnimation(data.pokemon_name, data.pokemon_sprite);
+                        }
                     }
 
                     updateCounters();
@@ -349,10 +352,6 @@
         form.addEventListener("submit", async function (e) {
             e.preventDefault();
 
-            const sound = new Audio("{{ url_for('static', filename = 'sounds/capture.mp3') }}");
-            sound.volume = 1;
-            sound.play().catch(() => {});
-
             const action = form.getAttribute("action");
 
             const response = await fetch(action, {
@@ -365,10 +364,18 @@
 
             if (response.status === 200) {
                 const data = await response.json();
-                showCaptureAnimation(data.pokemon_name, data.pokemon_sprite);
-            } else {
-                location.reload();
+                
+                if (data && data.pokemon_name) {
+                    const sound = new Audio("{{ url_for('static', filename = 'sounds/capture.mp3') }}");
+                    sound.volume = 1;
+                    sound.play().catch(() => {});
+
+                    showCaptureAnimation(data.pokemon_name, data.pokemon_sprite);
+                    return;
+                }
             }
+
+            location.reload();
         });
     });
 
