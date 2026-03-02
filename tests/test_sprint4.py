@@ -15,6 +15,7 @@ def app():
     with app.app_context():
         db.create_all()
         yield app
+        db.session.remove()
         db.drop_all()
 
 @pytest.fixture
@@ -28,13 +29,13 @@ def service(app):
 def register(client, username, email, password):
     return client.post("/register", data = {
         "username": username,
-        "email": email,
+        "identifier": email,
         "password": password
     }, follow_redirects = True)
 
 def login(client, email, password):
     return client.post("/login", data = {
-        "email": email,
+        "identifier": email,
         "password": password
     }, follow_redirects = True)
 
@@ -44,8 +45,8 @@ def login(client, email, password):
 # ------------------------
 
 def test_user_registration_and_login(client):
-    register(client, "testuser", "test@test.com", "password")
-    response = login(client, "test@test.com", "password")
+    register(client, "testuser", "login_test@test.com", "password")
+    response = login(client, "login_test@test.com", "password")
 
     assert response.status_code == 200
 

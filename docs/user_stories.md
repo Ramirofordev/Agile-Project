@@ -150,8 +150,9 @@
 - Task must support priority: low, medium, high
 - Default priority: medium
 - Priority must persist in DB
-- Priority must be visible in Kanban Board
-- No change to workflow transitions
+- Priority must auto-adjust based on task age (hybrid model)
+- Manual override must prevent automatic escalation
+- Priority must not break workflow transitions
 
 ---
 
@@ -174,12 +175,13 @@
 ## US-12 - Pokemon Reward System
 
 **As a** user
-**I want** to receive a Pokemon when completing a Pomodoro
+**I want** to receive a Pokemon when completing a Task
 **So that** productivity feels rewarding
 
 #### Acceptance Criteria:
-- Completing task via pomodoro triggers reward
-- App consumes Pokedex public API
-- A random Pokemon is assigned
+- Completing task (doing -> done) triggers reward logic
+- System consumes external Pokedex public API
+- A random Pokemon is assigned to the user
 - Pokemon is displayed in UI
 - API failures handled gracefully
+- Reward logic covered by automated tests (mocked integration)

@@ -236,6 +236,13 @@ def create_app(test_config=None):
                     data["status"],
                     current_user.id
                 )
+            
+            if "priority" in data:
+                task_service.update_priority(
+                    task_id,
+                    data["priority"],
+                    current_user.id
+                )
 
             if "title" in data:
                 task_service.edit_task(

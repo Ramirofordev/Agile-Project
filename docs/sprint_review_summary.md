@@ -170,4 +170,49 @@ Potential future improvements:
 - Password recovery funtionality
 - Role-based access control (Admin/User)
 - REST API endpoints for external integrations
-- Deployment configuration (production-ready setup )
+- Deployment configuration (production-ready setup)
+
+---
+
+# Sprint 5 Review
+
+### Sprint Goal
+
+Implement gamification mechanics, hybrid priority logic and external API integration while preserving architectural and test reliability.
+
+### Delivered Increment
+
+At the end of Sprint 5, the system:
+
+- Supports hybrid priority management (auto-escalation + manual override)
+- Provides full REST API for taks management
+- Assings Pokemon rewards upon task completion
+- Integrates external Pokedex API
+- Includes automated tests for API and reward logic
+- Maintains clean layered architecture
+
+### Validation
+
+- 20 automated tests passing
+- API endpoints validated
+- Reward logic tested with mocked
+- No regression from previous sprints
+- Manual verification of gamification flow
+
+### Feedback & Observations
+
+- System evovled from simple CRUD app to gamified productivity tool
+- Architecture proved scalable for new integrations
+- Business logic remains centralized and protected
+- Test coverage increased significantly
+
+### Adaptation for Next Sprint
+
+Potential improvements:
+
+- Trainer level progression system
+- Achievement system
+- Production-ready deployment setup
+- Timezone-aware datetime refactor
+- Role-based access control
+- Pomodoro implementation
