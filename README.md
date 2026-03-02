@@ -188,7 +188,7 @@ Test use an insolated in-memory SQLite database to prevent affecting production 
 
 ## Application Demo
 
-![Kanban Demo](demo.gif)
+![Kanban Demo](demo-3.0.gif)
 
 ## Author
 
