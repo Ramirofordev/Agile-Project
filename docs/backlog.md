@@ -22,3 +22,7 @@ Develop a task management web application using Agile methodology that allows us
 | US-10 | Task Priority System                      | High     | 5      | Done     |
 | US-11 | REST API for Tasks                        | High     | 5      | Done     |
 | US-12 | Pokemon Reward System                     | Medium   | 5      | Done     |
+| US-13 | Pomodoro Focus Timer                      | Medium   | 6      | Done     |
+| US-14 | XP Reward for Pomodoro Completion         | Medium   | 6      | Done     |
+| US-15 | Trainer Level System                      | High     | 6      | Done     |
+| US-16 | Trainer Profile Page                      | High     | 6      | Done     |

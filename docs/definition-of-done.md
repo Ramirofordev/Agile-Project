@@ -12,3 +12,4 @@ A user story is considered completed when:
 - Task ownership is enforced at service level
 - Business rules are validated at Service Layer
 - External integrations are mocked in tests
+- New features must include automated tests when applicable

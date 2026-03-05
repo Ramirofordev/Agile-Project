@@ -172,6 +172,8 @@
 - Must return JSON
 - Must validate transitions
 
+---
+
 ## US-12 - Pokemon Reward System
 
 **As a** user
@@ -185,3 +187,72 @@
 - Pokemon is displayed in UI
 - API failures handled gracefully
 - Reward logic covered by automated tests (mocked integration)
+
+---
+
+## US-13 - Pomodoro Focus Timer
+
+**As a** user
+**I want** a focus timer
+**So that** I can work in structured productivity sessions
+
+#### Acceptance Criteria:
+
+- The user must be able to start the timer
+- The user must be able to pause the timer
+- The user must be able to reset the timer
+- The timer must display the remaining time visually
+- The user must be able to select different focus duration (25 / 30 / 45 minutes)
+- The timer must continue running until the sessions is completed or paused
+
+---
+
+## US-14 - Pomodoro XP Reward
+
+**As a** user
+**I want** to gain XP after completing a focus session
+**So that** my productivity is rewarded
+
+#### Acceptance Criteria:
+
+- Completing a Pomodoro session must grant XP
+- XP must be added to the user's total XP
+- XP rewards must trigger level recalculation
+- XP reward logic must be handled in the Service layer
+- The XP bar must update after the reward is applied
+
+---
+
+## US-15 - Trainer Level Progression
+
+**As a** user
+**I want** to gain levels when earning XP
+**So that** I can track my productivity progress
+
+#### Acceptance Criteria:
+
+- XP must accumulate accross tasks and Pomodoro sessions 
+- The system must calculate the XP required for the next level
+- The user level must increase automatically when the threshold is reached
+- The current level must be displayed in the UI
+- The XP progress bar must reflect progress toward the next level
+
+---
+
+## US-16 - Trainer Profile Page
+
+**As a** user
+**I want** to access a personal trainer profile
+**So that** I can see my productivity statistics and Pokemon collection
+
+#### Acceptance Criteria:
+
+- The user must be able to open the trainer profile page
+- The profile must display:
+    - Trainer level
+    - Total XP
+    - Tasks completed
+    - Pomodoro sessions completed
+- The profile must display all captured Pokemon
+- Pokemon must appear in a grid-based layout
+- Newly captured Pokemon must be visually highlighted

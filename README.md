@@ -47,7 +47,7 @@ The project follows a layered architecture and Git version control best practice
 
 ## Agile Development Process
 
-This project was built incrementally across 3 structured sprints.
+This project was built incrementally across 6 structured sprints.
 
 ### 🟦 Sprint 1 - Core Architecture & CRUD
 
@@ -101,6 +101,25 @@ Business rules are enforced exclusively in the Service Layer
 - Additional automated tests for authentication and ownership
 
 ---
+
+### 🟦 Sprint 5 - Gamification & Api Integration
+
+- Hybrid task priority system (manual + automatic escalation)
+- Rest API for task management
+- External Pokedex API integration
+- Mocked API calls during automated testing
+- Expanded automated test coverage
+
+---
+
+### 🟦 Sprint 6 - Producitvity Mechanics & Trainer Progression
+
+- Pomodoro Focuss timer implementation
+- XP reward system for focus sessions
+- Trainer level progression system
+- XP progress bar visualization
+- Trainer profile page with productivity statistics
+- Personal Pokemon collection display
 
 ## Architecture
 
@@ -176,13 +195,11 @@ Test use an insolated in-memory SQLite database to prevent affecting production 
 
 ## Future Improvements
 
-- Role-based access control (Admin / User)
-- REST API endpoints
-- Task priority levels
-- Deployment configuration
+- Achievement / badge system
+- Pokemon rarity and shiny mechanics
+- Pokemon evolution system
 - Docker containerization
-- Pomodoro implementation
-- Visuals updated to look like pokemon
+- Deployment to cloud environment
 
 --- 
 
