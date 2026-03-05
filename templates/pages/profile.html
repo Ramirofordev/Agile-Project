@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class = "pokedex-container">
+
+    <div class = "pokedex-screen">
+
+        <h3 class = "text-center mb-4">👤 TRAINER PROFILE</h3>
+
+        <div class = "row text-center mb-4">
+
+            <div class = "col-md-3">
+                <h6>Level</h6>
+                <h4>{{ user.level }}</h4>
+            </div>
+
+            <div class = "col-md-3">
+                <h6>XP</h6>
+                <h4>{{ user.xp }}</h4>
+            </div>
+
+            <div class = "col-md-3">
+                <h6>Tasks Completed</h6>
+                <h4>{{ user.tasks_completed }}</h4>
+            </div>
+
+            <div class = "col-md-3">
+                <h6>Pomodoro Sessions</h6>
+                <h4>{{ user.pomodoro_sessions_completed }}</h4>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <h5 class = "text-center mb-3">📕 CAPTURE POKEMON</h5>
+
+        <div class = "pokemon-grid">
+
+            {% for pokemon in user.pokemons %}
+
+            <div class = "pokemon-card" data-pokemon-id = "{{ pokemon.id }}">
+
+                <img src = "{{ pokemon.sprite_url }}">
+
+                <div class = "pokemon-name">
+                    {{ pokemon.name }}
+                </div>
+            </div>
+            
+            {% else %}
+
+            <p class = "text-center w-100">No Pokemon captured yet.</p>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const newPokemon = localStorage.getItem("newPokemon");
+
+        if (!newPokemon) return;
+
+        const card = document.querySelector(
+            `[data-pokemon-id="${newPokemon}"]`
+        );
+
+        if (card){
+            card.classList.add("new-pokemon");
+        }
+
+        localStorage.removeItem("newPokemon");
+    });
+
+</script>
+
+{% endblock %}

@@ -1,13 +1,16 @@
 from domain.task import Task
-from datetime import datetime, timezone
+from datetime import datetime
+from domain.user import User
 from infraestructure.db import db
 from infraestructure.repositories.task_repository import TaskRepository
 from services.pokemon_services import PokemonService
+from services.user_progress_services import UserProgressService
 
 class TaskService:
     def __init__(self):
         self.repository = TaskRepository()
         self.pokemon_service = PokemonService()
+        self.user_progress_service = UserProgressService()
 
     def create_task(self, title, description, user_id):
         # Validations
@@ -52,7 +55,7 @@ class TaskService:
         return self.repository.delete_task(task_id)
 
     
-    def change_status(self, task_id: int, new_status: str, user_id: int):
+    def change_status(self, task_id: int, new_status: str, user_id: int, used_pomodoro: bool = False):
         task = self.repository.get_by_id(task_id)
         
         if not task:
@@ -63,13 +66,16 @@ class TaskService:
         
         allowed_transitions = {
             "todo": ["doing"],
-            "doing": ["done"],
+            "doing": ["done", "todo"],
             "done": {"doing"}
         }
 
         current_status = task.status
 
-        if new_status not in allowed_transitions[current_status]:
+        if new_status == current_status:
+            return task, None
+
+        if new_status not in allowed_transitions.get(current_status, []):
             raise ValueError(
                 f"Invalid transition from {current_status} to {new_status}"
             )
@@ -80,6 +86,15 @@ class TaskService:
 
         # If the task it's complete, give the pokemon
         if new_status == "done":
+            user = User.query.get(user_id)
+
+            # Register XP based on priority
+            self.user_progress_service.register_task_completion(
+                user,
+                task.priority,
+                used_pomodoro
+            )
+
             new_pokemon = self.pokemon_service.assign_random_pokemon_to_user(user_id)
 
         return updated_task, new_pokemon

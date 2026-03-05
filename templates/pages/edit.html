@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pokedex-container">
+
+    <div class="pokedex-screen">
+
+        <h3 class="text-center mb-4">✏️ EDIT TASK</h3>
+
+        <form method="post">
+
+            <!-- TITLE -->
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+
+                <input 
+                    type="text"
+                    name="title"
+                    class="form-control"
+                    value="{{ task.title }}"
+                    required
+                >
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    rows="3"
+                >{{ task.description }}</textarea>
+            </div>
+
+            <!-- PRIORITY -->
+            <div class="mb-4">
+
+                <label class="form-label">Priority</label>
+
+                <select name="priority" class="form-select">
+
+                    <option value="low"
+                    {% if task.priority == "low" %}selected{% endif %}>
+                        Low
+                    </option>
+
+                    <option value="medium"
+                    {% if task.priority == "medium" %}selected{% endif %}>
+                        Medium
+                    </option>
+
+                    <option value="high"
+                    {% if task.priority == "high" %}selected{% endif %}>
+                        High
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-between">
+
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    Back
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

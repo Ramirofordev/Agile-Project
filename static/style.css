@@ -1,4 +1,6 @@
-/* ======== GAME BACKGROUND ======= */
+/* =========================================
+   1. GLOBAL / APP BACKGROUND
+========================================= */
 
 body {
     background: linear-gradient(135deg, #1e293b, #0f172a);
@@ -11,44 +13,49 @@ body {
     letter-spacing: 3px;
     text-transform: uppercase;
     color: #facc15;
-    text-shadow: 0 0 10px rgba(250, 204, 21, 0.7),
-                 0 0 20px rgba(250, 204, 21, 0.4);
+    text-shadow: 
+        0 0 10px rgba(250,204,21,0.7),
+        0 0 20px rgba(250,204,21,0.4);
 }
 
-/* ===== COLUMN TYPES ==== */
+
+/* =========================================
+   2. KANBAN BOARD
+========================================= */
+
+.board-panel {
+    background: linear-gradient(145deg, #24344f, #1b2b44);
+    box-shadow: 0 0 50px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Column headers */
 
 .pokemon-header-todo {
-    background: linear-gradient(145deg, #3b82f6, #1e40af);
+    background: linear-gradient(145deg,#3b82f6,#1e40af);
     color: white;
     font-weight: bold;
 }
 
 .pokemon-header-doing {
-    background: linear-gradient(145deg, #facc15, #f59e0b);
+    background: linear-gradient(145deg,#facc15,#f59e0b);
     color: black;
     font-weight: bold;
 }
 
 .pokemon-header-done {
-    background: linear-gradient(145deg, #22c55e, #15803d);
+    background: linear-gradient(145deg,#22c55e,#15803d);
     color: white;
     font-weight: bold;
 }
 
-.kanban-board {
-    display: flex;
-    gap: 20px;
-}
 
-.column {
-    flex: 1;
-    background-color: #f4f4f4;
-    padding: 15px;
-    border-radius: 8px;
-}
+/* =========================================
+   3. TASK CARDS
+========================================= */
 
 .task-card {
-    background: linear-gradient(145deg, #1e293b, #0f172a);
+    background: linear-gradient(145deg,#1e293b,#0f172a);
     border: 2px solid #334155;
     color: white;
     border-radius: 15px;
@@ -58,128 +65,197 @@ body {
 .task-card:hover {
     transform: scale(1.05);
     border-color: #facc15;
-    box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+    box-shadow: 0 0 15px rgba(250,204,21,0.5);
 }
 
-.btn {
-    border-radius: 10px !important;
-    font-weight: bold;
+.task-description{
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
-/* Pokedex Container */
+/* Priority labels */
+
+.task-priority{
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.priority-high{ color:#facc15; }
+.priority-low{ color:#22c55e; }
+
+/* Task completion effect */
+
+.task-complete {
+    animation: taskFlash 0.6s ease;
+}
+
+@keyframes taskFlash {
+    0% { background-color: #22c55e; }
+    100% { background-color: transparent; }
+}
+
+
+/* =========================================
+   4. BUTTONS
+========================================= */
+
+.btn{
+    border-radius:10px !important;
+    font-weight:bold;
+}
+
+
+/* =========================================
+   5. POKEDEX CONTAINER
+========================================= */
+
 .pokedex-container {
-    background-color: #dc0a2d;
-    border-radius: 25px;
-    padding: 25px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3),
-                0 0 25px rgba(220, 10, 45, 0.4);
-    max-width: 900px;
-    margin: 0 auto 40px auto;
+    background-color:#dc0a2d;
+    border-radius:25px;
+    padding:25px;
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.3),
+        0 0 25px rgba(220,10,45,0.4);
+    max-width:900px;
+    margin:0 auto 40px auto;
 }
 
-/* POKEDEX INNER SCREEN */
+
+/* =========================================
+   6. POKEDEX SCREEN
+========================================= */
+
 .pokedex-screen {
-    background-color: #f4f4f4;
-    border-radius: 20px;
-    padding: 30px;
-    border: 8px solid #b3001b;
-    color: #1f2937;
-    position: relative;
+    background-color:#f4f4f4;
+    border-radius:20px;
+    padding:30px;
+    border:8px solid #b3001b;
+    color:#1f2937;
+    position:relative;
 }
 
 .pokedex-screen h5 {
-    font-weight: bold;
-    letter-spacing: 1px;
-    color: #111827;
+    font-weight:bold;
+    letter-spacing:1px;
+    color:#111827;
 }
 
-/* GRID STYLE */
-.pokemon-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 15px;
-}
-
-/* POKEMON CARD */
-.pokemon-card {
-    background: linear-gradient(145deg, #ffffff, #e6e6e6);
-    border-radius: 15px;
-    padding: 15px;
-    text-align: center;
-    transition: all 0.2s ease;
-    border: 2px solid #d0d0d0;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.pokemon-card:hover {
-    transform: scale(1.08);
-    border-color: #dc0a2d;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.pokemon-card img{
-    width: 80px;
-}
-
-.pokemon-name {
-    margin-top: 8px;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #111827;
-}
+/* Scrollable version */
 
 .pokedex-screen {
-    background-color: #f4f4f4;
-    border-radius: 20px;
-    padding: 25px;
-    border: 8px solid #b3001b;
-    color: #1f2937;
-    max-height: 330px;
-    overflow-y: auto;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+    padding:25px;
+    max-height:330px;
+    overflow-y:auto;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
 }
 
+/* Screen texture */
+
 .pokedex-screen:after {
-    content: "";
-    position: absolute;
-    inset: 0;
+    content:"";
+    position:absolute;
+    inset:0;
     background: repeating-linear-gradient(
-        to bottom, 
-        rgba(0, 0, 0, 0.02),
-        rgba(0, 0, 0, 0.02) 2px,
+        to bottom,
+        rgba(0,0,0,0.02),
+        rgba(0,0,0,0.02) 2px,
         transparent 2px,
         transparent 4px
     );
-    pointer-events: none;
+    pointer-events:none;
 }
 
-/* ==== CAPTURE OVERLAY ==== */
+
+/* =========================================
+   7. POKEMON GRID / CARDS
+========================================= */
+
+.pokemon-grid {
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:15px;
+}
+
+.pokemon-card {
+    background:linear-gradient(145deg,#ffffff,#e6e6e6);
+    border-radius:15px;
+    padding:15px;
+    text-align:center;
+    transition:all 0.2s ease;
+    border:2px solid #d0d0d0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.pokemon-card:hover {
+    transform:scale(1.08);
+    border-color:#dc0a2d;
+    box-shadow:0 6px 12px rgba(0,0,0,0.2);
+}
+
+.pokemon-card img{
+    width:80px;
+}
+
+.pokemon-name {
+    margin-top:8px;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#111827;
+}
+
+
+/* =========================================
+   8. NEW POKEMON HIGHLIGHT
+========================================= */
+
+.new-pokemon {
+    border:3px solid #facc15;
+    box-shadow:0 0 20px rgba(250,204,21,0.8);
+    position:relative;
+}
+
+.new-pokemon::after {
+    content:"NEW!";
+    position:absolute;
+    top:-10px;
+    right:-10px;
+    background:#facc15;
+    color:black;
+    font-size:10px;
+    font-weight:bold;
+    padding:4px 6px;
+    border-radius:8px;
+}
+
+
+/* =========================================
+   9. CAPTURE OVERLAY
+========================================= */
 
 .capture-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    width:100vw;
+    height:100vh;
 }
 
-.hidden {
-    display: none;
-}
+.hidden { display:none; }
+
+
+/* Pokeball animation */
 
 .pokeball-img {
-    width: 120px;
-    margin-top: 20px;
-    animation: shake 1s ease-in-out 2;
-}
-
-.capture-pokemon {
-    width: 150px;
-    animation: pop 0.6s ease;
-    margin-top: 20px;
+    width:120px;
+    margin-top:20px;
+    animation:shake 1s ease-in-out 2;
 }
 
 @keyframes shake {
@@ -190,17 +266,12 @@ body {
     100% { transform: rotate(0); }
 }
 
-.pokeball-animation {
-    text-align: center;
-    animation: fadeIn 0.5s ease;
-    position: relative;
-    z-index: 2;
-}
+/* Pokemon pop animation */
 
-.capture-text p {
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
+.capture-pokemon {
+    width:150px;
+    animation:pop 0.6s ease;
+    margin-top:20px;
 }
 
 @keyframes pop {
@@ -209,39 +280,38 @@ body {
     100% { transform: scale(1); }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+/* Capture layout */
+
+.pokeball-animation {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
 }
 
-.new-pokemon {
-    border: 3px solid #facc15;
-    box-shadow: 0 0 20px rgba(250, 204, 21, 0.8);
-    position: relative;
+.capture-text p {
+    font-size:20px;
+    font-weight:bold;
+    color:white;
 }
 
-.new-pokemon::after {
-    content: "NEW!";
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: #facc15;
-    color: black;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 4px 6px;
-    border-radius: 8px;
-}
 
-/* ==== FLASH EFFECT ==== */
+/* =========================================
+   10. FLASH EFFECT
+========================================= */
 
 .capture-flash {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 40%, rgba(255, 255, 255, 0) 80%);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
+    position:absolute;
+    inset:0;
+    background: radial-gradient(
+        circle,
+        rgba(255,255,255,1) 0%,
+        rgba(255,255,255,0.9) 40%,
+        rgba(255,255,255,0) 80%
+    );
+    opacity:0;
+    pointer-events:none;
+    z-index:1;
 }
 
 .flash-active {
@@ -252,4 +322,107 @@ body {
     0% { opacity: 0; }
     40% { opacity: 1; }
     100% { opacity: 0; }
+}
+
+
+/* =========================================
+   11. POMODORO TIMER
+========================================= */
+
+.pomodoro-wrapper {
+    margin-top:30px;
+}
+
+.pomodoro-container {
+    position:relative;
+    width:220px;
+    height:220px;
+    margin:0 auto;
+}
+
+.progress-ring-bg {
+    fill:transparent;
+    stroke:#334155;
+    stroke-width:15;
+}
+
+.progress-ring-circle {
+    fill:transparent;
+    stroke:#ef4444;
+    stroke-width:15;
+    stroke-linecap:round;
+    transform:rotate(-90deg);
+    transform-origin:50% 50%;
+    transition: stroke 0.3s ease;
+}
+
+.pomodoro-time {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-60%);
+    font-size:32px;
+    font-weight:bold;
+}
+
+/* Glow states */
+
+.focus-active { filter:drop-shadow(0 0 15px #ef4444) }
+.break-active { filter:drop-shadow(0 0 15px #3b82f6) }
+.long-break-active { filter:drop-shadow(0 0 15px #22c55e) }
+
+
+/* =========================================
+   12. XP BAR
+========================================= */
+
+.xp-wrapper {
+    max-width:500px;
+    margin:0 auto;
+}
+
+.level-badge {
+    font-size:22px;
+    font-weight:bold;
+    color:#facc15;
+    margin-bottom:10px;
+    text-shadow:0 0 10px rgba(250,204,21,0.6);
+}
+
+.xp-bar-container {
+    width:100%;
+    height:18px;
+    background:#1e293b;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+    margin-bottom:8px;
+}
+
+.xp-bar-fill {
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#facc15,#f59e0b);
+    transition: width 0.8s ease-in-out;
+}
+
+.xp-text {
+    font-size:14px;
+    color:#cbd5e1;
+}
+
+.xp-gain {
+    animation: xpPulse 0.8s ease;
+}
+
+@keyframes xpPulse {
+    0% { transform: scale(1); }
+    50% { transform: scaleX(1.05); }
+    100% { transform: scaleX(1); }
+}
+
+@keyframes levelGlow {
+    0% { box-shadow: 0 0 0px gold; }
+    50% { box-shadow: 0 0 25px gold; }
+    100% { box-shadow: 0 0 0px gold; }
 }

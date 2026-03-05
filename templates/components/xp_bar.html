@@ -1,0 +1,20 @@
+<div class="xp-wrapper text-center mb-4">
+
+    <div class="level-badge">
+        Level <span id="user-level">{{ user.level }}</span>
+    </div>
+
+    <div class="xp-bar-container">
+        <div 
+            class="xp-bar-fill"
+            id="xp-bar-fill"
+            data-xp="{{ user.xp }}"
+            data-next="{{ next_level_xp }}">
+        </div>
+    </div>
+
+    <div class="xp-text" id="xp-text">
+        {{ user.xp }} / {{ next_level_xp }} XP
+    </div>
+
+</div>

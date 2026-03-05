@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from infraestructure.db import db
 from services.task_service import TaskService
 from services.auth_service import AuthService
+from services.user_progress_services import UserProgressService
 from infraestructure.repositories.user_repository import UserRepository
 from domain.user import User
 
@@ -27,6 +28,7 @@ def create_app(test_config=None):
 
     task_service = TaskService()
     auth_service = AuthService(UserRepository())
+    user_progress_service = UserProgressService()
 
     # -------------------------
     # Flask-Login loader
@@ -34,7 +36,7 @@ def create_app(test_config=None):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
 
     # -------------------------
     # Routes
@@ -44,7 +46,16 @@ def create_app(test_config=None):
     @login_required
     def index():
         tasks = task_service.list_tasks(current_user.id)
-        return render_template("board.html", tasks=tasks, user = current_user)
+        return render_template("pages/dashboard.html", tasks=tasks, user = current_user)
+
+    @app.route("/profile")
+    @login_required
+    def profile():
+
+        return render_template(
+            "pages/profile.html",
+            user = current_user
+        )
 
     # -------------------------
     # Authentication
@@ -65,7 +76,7 @@ def create_app(test_config=None):
                 flash(str(e), "danger")
                 return redirect(url_for("register"))
 
-        return render_template("register.html")
+        return render_template("pages/register.html")
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
@@ -81,7 +92,7 @@ def create_app(test_config=None):
                 flash(str(e), "danger")
                 return redirect(url_for("login"))
 
-        return render_template("login.html")
+        return render_template("pages/login.html")
 
     @app.route("/logout")
     @login_required
@@ -115,22 +126,35 @@ def create_app(test_config=None):
         if not task or task.user_id != current_user.id:
             return redirect(url_for("index"))
 
-        return render_template("edit.html", task=task)
+        return render_template("pages/edit.html", task=task)
 
     @app.route("/edit/<int:task_id>", methods=["POST"])
     @login_required
     def edit_task(task_id):
-        try:
+        task = task_service.get_task(task_id)
+
+        if request.method == "POST":
+
+            title = request.form["title"]
+            description = request.form["description"]
+            priority = request.form["priority"]
+
             task_service.edit_task(
                 task_id,
-                request.form["title"],
+                title,
                 current_user.id,
-                request.form.get("description", "")
+                description
             )
-        except ValueError as e:
-            flash(str(e), "danger")
 
-        return redirect(url_for("index"))
+            task_service.update_priority(
+                task_id,
+                priority,
+                current_user.id
+            )
+
+            return redirect(url_for("index"))
+
+        return render_template("pages/edit.html", task = task)
 
     @app.route("/delete/<int:task_id>", methods=["POST"])
     @login_required
@@ -146,21 +170,45 @@ def create_app(test_config=None):
     # Drag & Drop Status Change
     # -------------------------
 
-    @app.route("/status/<int:task_id>/<new_status>", methods=["POST"])
+    @app.route("/status/<int:task_id>/<new_status>", methods = ["POST"])
     @login_required
     def change_status(task_id, new_status):
         try:
-            _, new_pokemon = task_service.change_status(task_id, new_status, current_user.id)
+            data = request.get_json(silent = True) or {}
+            used_pomodoro = data.get("used_pomodoro", False)
+
+            _, new_pokemon = task_service.change_status(task_id, new_status, current_user.id, used_pomodoro)
 
             if new_pokemon:
                 return jsonify({
                     "pokemon_name": new_pokemon.name,
-                    "pokemon_sprite": new_pokemon.sprite_url
+                    "pokemon_sprite": new_pokemon.sprite_url,
+                    "pokemon_id": new_pokemon.id,
+                    "total_xp": current_user.xp,
+                    "level": current_user.level,
+                    "next_level_xp": user_progress_service.xp_needed_for_next_level(current_user.level)
                 }), 200
             
-            return "", 204
+            return jsonify({
+                "total_xp": current_user.xp,
+                "level": current_user.level,
+                "next_level_xp": user_progress_service.xp_needed_for_next_level(current_user.level)
+            })
+
         except ValueError:
             return "", 400
+        
+    @app.route("/api/pomodoro/complete", methods = ["POST"])
+    @login_required
+    def complete_pomodoro():
+        xp_gained = user_progress_service.register_pomodoro_completion(current_user)
+
+        return jsonify({
+            "xp_gained": xp_gained,
+            "total_xp": current_user.xp,
+            "level": current_user.level,
+            "next_level_xp": user_progress_service.xp_needed_for_next_level(current_user.level)
+        })
         
     # ----------------------
     # REST API
@@ -251,6 +299,7 @@ def create_app(test_config=None):
                     current_user.id,
                     data.get("description", "")
                 )
+                
 
             task = task_service.get_task(task_id)
             

@@ -9,6 +9,11 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(150), nullable = False, unique = True)
     password_hash = db.Column(db.String(255), nullable = False)
 
+    xp = db.Column(db.Integer, default = 0)
+    level = db.Column(db.Integer, default = 1)
+    pomodoro_sessions_completed = db.Column(db.Integer, default = 0)
+    tasks_completed = db.Column(db.Integer, default = 0)
+
     tasks = db.relationship("Task", backref= "owner", lazy = True)
     pokemons = db.relationship("Pokemon", backref = "owner", lazy = True)
 
