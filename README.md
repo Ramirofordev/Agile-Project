@@ -147,7 +147,7 @@ The system follows a clean layered architecture:
 - **Flask** -> Controller Layer
 - **TaskService, AuthService, PokemonService & ProfileService** -> Business Logic Layer
 - **Respositories** -> Persistence Layer
-- **Domain Models (Task + User)** -> Domain Layer
+- **Domain Models (Task, User, Pokemon)** -> Domain Layer
 
 This ensures:
 
@@ -157,8 +157,6 @@ This ensures:
 - Business rule protection
 
 ---
-
-## System Architecture
 
 ## System Architecture
 
@@ -191,6 +189,17 @@ flowchart TD
     F --> N[External PokeAPI]
 
 ```
+---
+
+### Architecture Principles
+
+This project follows a layered architecture designed to enforce separation of concerns and maintain clear boundaries between application layers.
+
+- **Controller Layer** handles HTTP requests and responses
+- **Service Layer** contains business logic and workflow rules
+- **Repository Layer** manages persistence and database interaction
+- **Domain Layer** defines core entities of the system
+
 ---
 
 ## Controlled workflow
