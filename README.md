@@ -17,7 +17,7 @@ The project follows a layered architecture and Git version control best practice
 - Follow clean architecture principles
 - Enforce business rules in a dedicated Service Layer
 - Maintain proper documentation
-- Use Git with strucutred commits and branches
+- Use Git with structured commits and branches
 
 ---
 
@@ -28,7 +28,7 @@ The project follows a layered architecture and Git version control best practice
 - SQLite
 - SQLAlchemy
 - HTML / CSS
-- Bootsrap 5
+- Bootstrap 5
 - Pytest
 - Git & Github
 
@@ -112,9 +112,9 @@ Business rules are enforced exclusively in the Service Layer
 
 ---
 
-### 🟦 Sprint 6 - Producitvity Mechanics & Trainer Progression
+### 🟦 Sprint 6 - Productivity Mechanics & Trainer Progression
 
-- Pomodoro Focuss timer implementation
+- Pomodoro Focus timer implementation
 - XP reward system for focus sessions
 - Trainer level progression system
 - XP progress bar visualization
@@ -150,8 +150,8 @@ The system follows a clean layered architecture:
 This ensures:
 
 - Separation of concerns
-- Single Responsability Principle
-- Maintanable and scalable design
+- Single Responsibility Principle
+- Maintainable and scalable design
 - Business rule protection
 
 ---
@@ -195,7 +195,7 @@ The UI never contains business logic.
 
 **Pytest**
 
-Test use an insolated in-memory SQLite database to prevent affecting production data.
+Test use an isolated in-memory SQLite database to prevent affecting production data.
 
 ---
 
