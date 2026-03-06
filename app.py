@@ -21,7 +21,8 @@ def create_app(test_config=None):
     if test_config:
         app.config.update(test_config)
     else:
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///kanban.db"
+        db_path = os.path.join(os.getcwd(), "kanban.db")
+        app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 
     db.init_app(app)
 
