@@ -8,12 +8,14 @@ from services.profile_service import ProfileService
 from infraestructure.repositories.user_repository import UserRepository
 from domain.user import User
 
+import os
+
 
 def create_app(test_config=None):
 
     app = Flask(__name__)
 
-    app.config["SECRET_KEY"] = "super_secret_key_for_dev"
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev_key")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     if test_config:
