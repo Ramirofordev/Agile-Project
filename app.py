@@ -340,6 +340,9 @@ def create_app(test_config=None):
             return "", 204
         except ValueError:
             return jsonify({"error": "Task not found"}), 404
+        
+    with app.app_context():
+        db.create_all()
 
     return app
 
