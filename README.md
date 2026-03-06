@@ -138,6 +138,8 @@ Business rules are enforced exclusively in the Service Layer
 - Refactor of PokemonService to use PokemonRepository
 - Improved architecture separation between service and persitance layers
 
+---
+
 ## Architecture
 
 The system follows a clean layered architecture:
@@ -154,6 +156,41 @@ This ensures:
 - Maintainable and scalable design
 - Business rule protection
 
+---
+
+## System Architecture
+
+## System Architecture
+
+```mermaid
+flowchart TD
+
+    A[Browser Client] --> B[Flask Controllers]
+
+    B --> C[Service Layer]
+
+    C --> D[TaskService]
+    C --> E[AuthService]
+    C --> F[PokemonService]
+    C --> G[ProfileService]
+    C --> H[UserProgressService]
+
+    D --> I[Repositories]
+    E --> I
+    F --> I
+    G --> I
+
+    I --> J[TaskRepository]
+    I --> K[UserRepository]
+    I --> L[PokemonRepository]
+
+    J --> M[(SQLite Database)]
+    K --> M
+    L --> M
+
+    F --> N[External PokeAPI]
+
+```
 ---
 
 ## Controlled workflow
