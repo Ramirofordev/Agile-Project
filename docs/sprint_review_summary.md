@@ -38,7 +38,7 @@ Sprint 2 will focus on:
 - Enforcing controlled workflow transitions
 - Implementing delete functionality 
 - Introducing automated unit testing
-- Strengtheing business logic validation
+- Strengthening business logic validation
 
 ---
 
@@ -77,7 +77,7 @@ At the end of Sprint 2, the system:
 Sprint 3 will focus on:
 - Implementing Kanban board visualization
 - Improving user experience
-- Enchacing UI interaction
+- Enhacing UI interaction
 - Refining status change visual feedback
 
 ---
@@ -186,7 +186,7 @@ At the end of Sprint 5, the system:
 
 - Supports hybrid priority management (auto-escalation + manual override)
 - Provides full REST API for taks management
-- Assings Pokemon rewards upon task completion
+- Assigns Pokemon rewards upon task completion
 - Integrates external Pokedex API
 - Includes automated tests for API and reward logic
 - Maintains clean layered architecture
@@ -267,3 +267,41 @@ Potential improvements:
 - Improved test coverage for productivity mechanics
 - Deployment configuration for production environment
 - Performance optimization for API endpoints
+
+---
+
+# Sprint 7 Review
+
+Enhance the trainer profile experience and introduce a full Pokedex visualization with interactive Pokemon details
+
+### Delivered Increment
+
+At the end of Sprint 7, the system:
+
+- Displays the full Pokedex (1-151)
+- Differentiates captured and non-captured Pokemon
+- Highlights newly captured Pokemon
+- Allows viewing detailed Pokemon information through an interactive modal
+- Uses dynamic Pokemon type styling
+- Maintains architectural separation through repository abstraction
+
+### Validation 
+
+- Manual testing verified Pokemon modal interactions
+- Pokedex correcty reflects captured Pokemon
+- Newly captured Pokemon are visually highlighted
+- All previous automated tests continue to pass
+- No regression detected from previous sprints
+
+### Feedback & Observations
+
+- The Pokedex view significantly improves the gamification experience
+- Pokemon detail modal provides additional engagement
+- Repository refactor improved architectural consistency
+- The system continues scaling without introducing tight coupling
+
+### Adaptation for Next Sprint:
+
+- Pokemon evolution mechanics
+- Pokedex filters by type or rarity
+- Deployment configuration

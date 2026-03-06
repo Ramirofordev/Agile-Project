@@ -2,7 +2,7 @@
 
 ## Product Objective
 
-Develop a task management web application using Agile methodology that allows users to create, edit, delete and manage tasks through a controlled workflow displayed in a Kanban board.
+Develop a gamified task management web application using Agile methodology that allows users to create, edit, delete and manage tasks through a controlled workflow displayed in a Kanban board.
 
 ---
 
@@ -26,3 +26,6 @@ Develop a task management web application using Agile methodology that allows us
 | US-14 | XP Reward for Pomodoro Completion         | Medium   | 6      | Done     |
 | US-15 | Trainer Level System                      | High     | 6      | Done     |
 | US-16 | Trainer Profile Page                      | High     | 6      | Done     |
+| US-16 | Trainer Profile Page (Enhancement)        | High     | 7      | Done     |
+|       | Pokedex Visualization and Interaction     | Medium   | 7      | Done     |
+ 

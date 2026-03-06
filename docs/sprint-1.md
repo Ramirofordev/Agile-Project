@@ -41,7 +41,7 @@ This sprint focuses on building a solid architectural base to support future lif
 ## Technical Tasks
 
 - Create Task Model (Domain Layer)
-- Implement TakeRepository (Persistance Layer)
+- Implement TaskRepository (Persistance Layer)
 - Implement TaskService (Business Logic Layer)
 - Create Flask routes (Controller Layer)
 - Create HTML templates

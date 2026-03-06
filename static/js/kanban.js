@@ -116,7 +116,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 showCaptureAnimation(
                     data.pokemon_name,
                     data.pokemon_sprite,
-                    data.pokemon_id
+                    data.pokemon_id,
+                    data.is_shiny
                 );
             }
 

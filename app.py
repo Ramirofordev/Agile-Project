@@ -4,6 +4,7 @@ from infraestructure.db import db
 from services.task_service import TaskService
 from services.auth_service import AuthService
 from services.user_progress_services import UserProgressService
+from services.profile_service import ProfileService
 from infraestructure.repositories.user_repository import UserRepository
 from domain.user import User
 
@@ -29,6 +30,7 @@ def create_app(test_config=None):
     task_service = TaskService()
     auth_service = AuthService(UserRepository())
     user_progress_service = UserProgressService()
+    profile_service = ProfileService()
 
     # -------------------------
     # Flask-Login loader
@@ -52,9 +54,22 @@ def create_app(test_config=None):
     @login_required
     def profile():
 
+        pokedex = profile_service.build_pokedex(current_user)
+
+        stats = profile_service.get_profile_stats(current_user)
+
+        achievements = profile_service.get_achievements(stats)
+
         return render_template(
             "pages/profile.html",
-            user = current_user
+            user = current_user,
+            pokedex = pokedex,
+            captured = stats["captured"],
+            percent = stats["percent"],
+            shinies = stats["shinies"],
+            legendary = stats["legendary"],
+            total_pokemon = profile_service.TOTAL_POKEMON,
+            achievements = achievements
         )
 
     # -------------------------
@@ -183,7 +198,8 @@ def create_app(test_config=None):
                 return jsonify({
                     "pokemon_name": new_pokemon.name,
                     "pokemon_sprite": new_pokemon.sprite_url,
-                    "pokemon_id": new_pokemon.id,
+                    "pokemon_id": new_pokemon.dex_number,
+                    "is_shiny": new_pokemon.is_shiny,
                     "total_xp": current_user.xp,
                     "level": current_user.level,
                     "next_level_xp": user_progress_service.xp_needed_for_next_level(current_user.level)

@@ -4,57 +4,162 @@
 
 <div class = "pokedex-container">
 
-    <div class = "pokedex-screen">
+    <div class = "trainer-card">
 
-        <h3 class = "text-center mb-4">👤 TRAINER PROFILE</h3>
+        <div class = "trainer-header">
 
-        <div class = "row text-center mb-4">
-
-            <div class = "col-md-3">
-                <h6>Level</h6>
-                <h4>{{ user.level }}</h4>
+            <div class = "trainer-avatar">
+                <img src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
             </div>
 
-            <div class = "col-md-3">
+            <div class = "trainer-info">
+                <h2>{{ current_user.username }}</h2>
+                <p>Trainer Level {{ user.level }}</p>
+            </div>
+        </div>
+
+        <div class = "trainer-stats row text-center">
+
+            <div class = "col">
                 <h6>XP</h6>
-                <h4>{{ user.xp }}</h4>
+                <h3>{{ user.xp }}</h3>
             </div>
 
-            <div class = "col-md-3">
+            <div class ="col">
                 <h6>Tasks Completed</h6>
-                <h4>{{ user.tasks_completed }}</h4>
+                <h3>{{ user.tasks_completed}}</h3>
             </div>
 
-            <div class = "col-md-3">
-                <h6>Pomodoro Sessions</h6>
-                <h4>{{ user.pomodoro_sessions_completed }}</h4>
+            <div class = "col">
+                <h6>Pokemon Captured</h6>
+                <h3>{{ captured }}</h3>
+            </div>
+
+            <div class = "col">
+                <h6>Shinies</h6>
+                <h3>✨ {{ shinies }}</h3>
+            </div>
+
+            <div class = "col">
+                <h6>Legendary</h6>
+                <h3>⭐ {{ legendary }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="trainer-achievements">
+
+        <h5>🏅 Achievements</h5>
+
+        <div class="achievement-grid">
+
+            {% for achievement in achievements %}
+
+            <div class="achievement-badge">
+
+                <div class="badge-icon">
+                    {{ achievement.icon }}
+                </div>
+
+                <div class="badge-name">
+                    {{ achievement.name }}
+                </div>
+
+            </div>
+
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+        <hr>
+
+        <div class = "text-center mb-4">
+
+            <h5>📊 Pokedex Progress</h5>
+
+            <p>
+                {{ captured }} / {{ total_pokemon }} Pokemon
+            </p>
+            
+            <div class = "pokedex-progress-bar"
+                style = "--progress: {{ percent }}%;">
             </div>
 
         </div>
 
-        <hr>
-
-        <h5 class = "text-center mb-3">📕 CAPTURE POKEMON</h5>
+        <h5 class = "text-center mb-3">📕 POKEDEX</h5>
 
         <div class = "pokemon-grid">
 
-            {% for pokemon in user.pokemons %}
+            {% for pokemon in pokedex %}
 
-            <div class = "pokemon-card" data-pokemon-id = "{{ pokemon.id }}">
+            <div class = "pokemon-card {% if pokemon.captured %} type-{{ pokemon.type1 }} {% if pokemon.type2 %} type-{{ pokemon.type2 }} {% endif %} {% endif %}" data-pokemon-dex = "{{ pokemon.dex }}" data-shiny = "{{ pokemon.is_shiny }}">
+
+                {% if pokemon.captured %}
 
                 <img src = "{{ pokemon.sprite_url }}">
+
+                <div class = "pokemon-number">
+                    #{{ "%03d"|format(pokemon.dex) }}
+                </div>
 
                 <div class = "pokemon-name">
                     {{ pokemon.name }}
                 </div>
-            </div>
-            
-            {% else %}
 
-            <p class = "text-center w-100">No Pokemon captured yet.</p>
+                {% if pokemon.is_shiny %}
+                <div class = "shiny-badge">
+                    🌟 SHINY
+                </div>
+                {% endif %}
+
+                <div class = "rarity-label rarity-text-{{ pokemon.rarity }}">
+                    {{ pokemon.rarity | capitalize }}
+                </div>
+
+                {% else %}
+
+                <img
+                    src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.dex }}.png"
+                    class = "pokemon-silhouette">
+
+                <div class = "pokemon-number">
+                    #{{ "%03d"|format(pokemon.dex) }}
+                </div>
+
+                <div class = "pokemon-name">
+                    ???
+                </div>
+                {% endif %}
+
+            </div>
+
 
             {% endfor %}
 
+        </div>
+
+        <div id = "pokemon-modal" class = "pokemon-modal hidden">
+
+            <div class = "pokemon-modal-content">
+
+                <span id = "pokemon-modal-close">✖️</span>
+
+                <img id = "modal-sprite">
+
+                <h3 id = "modal-name"></h3>
+
+                <p id = "modal-types"></p>
+
+                <p id = "modal-height"></p>
+
+                <p id = "modal-weight"></p>
+                
+                <p id = "modal-abilities"></p>
+            </div>
         </div>
     </div>
 </div>
@@ -66,7 +171,7 @@
         if (!newPokemon) return;
 
         const card = document.querySelector(
-            `[data-pokemon-id="${newPokemon}"]`
+            `[data-pokemon-dex="${newPokemon}"]`
         );
 
         if (card){
@@ -74,6 +179,57 @@
         }
 
         localStorage.removeItem("newPokemon");
+    });
+
+    document.querySelectorAll(".pokemon-card").forEach(card => {
+        card.addEventListener("click", async () => {
+
+            const dex = card.dataset.pokemonDex;
+
+            if (!dex) return;
+
+            if (!card.className.includes("type-")) return;
+
+            const response = await fetch(
+                `https://pokeapi.co/api/v2/pokemon/${dex}`
+            );
+
+            const data = await response.json();
+
+            const isShiny = card.dataset.shiny === "True";
+
+            const modal = document.getElementById("pokemon-modal");
+
+            modal.className = "pokemon-modal";
+
+            card.classList.forEach(cls => {
+                if (cls.startsWith("type-")) {
+                    modal.classList.add(cls);
+                }
+            });
+
+            modal.classList.remove("hidden");
+
+            document.getElementById("modal-sprite").src = isShiny ? data.sprites.front_shiny : data.sprites.front_default;
+
+            document.getElementById("modal-name").textContent = data.name.toUpperCase();
+
+            document.getElementById("modal-types").textContent = "Type: " + data.types.map(t => t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)).join(" / ");
+
+            document.getElementById("modal-height").textContent = "Height: " + data.height / 10 + " m";
+
+            document.getElementById("modal-weight").textContent = "Weight: " + data.weight / 10 + " kg";
+
+            document.getElementById("modal-abilities").textContent = "Abilities: " + data.abilities.map(a => a.ability.name).join(", ");
+        });
+    });
+
+    document.getElementById("pokemon-modal-close")
+    .addEventListener("click", () => {
+
+        document.getElementById("pokemon-modal")
+        .classList.add("hidden");
+
     });
 
 </script>

@@ -43,7 +43,9 @@ def test_pokemon_reward_on_done(service, test_user):
 
         mock_assing.return_value = type("Pokemon", (), {
             "name": "pikachu",
-            "sprite_url": "sprite.png"
+            "sprite_url": "sprite.png",
+            "dex_number": 25,
+            "is_shiny": False
         })()
 
         # todo -> doing

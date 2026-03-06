@@ -122,6 +122,13 @@ body {
     margin:0 auto 40px auto;
 }
 
+.pokedex-progress-bar{
+    height: 100%;
+    width: var(--progress);
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    transition: width 0.6s ease;
+}
+
 
 /* =========================================
    6. POKEDEX SCREEN
@@ -130,25 +137,20 @@ body {
 .pokedex-screen {
     background-color:#f4f4f4;
     border-radius:20px;
-    padding:30px;
+    padding:25px;
     border:8px solid #b3001b;
     color:#1f2937;
     position:relative;
+
+    max-height:330px;
+    overflow-y:auto;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
 }
 
 .pokedex-screen h5 {
     font-weight:bold;
     letter-spacing:1px;
     color:#111827;
-}
-
-/* Scrollable version */
-
-.pokedex-screen {
-    padding:25px;
-    max-height:330px;
-    overflow-y:auto;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
 }
 
 /* Screen texture */
@@ -167,6 +169,23 @@ body {
     pointer-events:none;
 }
 
+.pokemon-silhouette{
+    filter: brightness(0);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.pokemon-number{
+    font-size: 12px;
+    font-weight: bold;
+    color: #374151;
+    margin-top: 4px;
+    letter-spacing: 1px;
+}
+
+.pokemon-card:hover .pokemon-silhouette{
+    opacity: 0.9;
+}
 
 /* =========================================
    7. POKEMON GRID / CARDS
@@ -179,7 +198,10 @@ body {
 }
 
 .pokemon-card {
-    background:linear-gradient(145deg,#ffffff,#e6e6e6);
+    --type1: var(--normal);
+    --type2: var(--normal);
+
+    background:linear-gradient(145deg, var(--type1), var(--type2));
     border-radius:15px;
     padding:15px;
     text-align:center;
@@ -191,11 +213,7 @@ body {
 .pokemon-card:hover {
     transform:scale(1.08);
     border-color:#dc0a2d;
-    box-shadow:0 6px 12px rgba(0,0,0,0.2);
-}
-
-.pokemon-card img{
-    width:80px;
+    box-shadow:0 0 20px var(--type1);
 }
 
 .pokemon-name {
@@ -204,6 +222,42 @@ body {
     font-weight:800;
     letter-spacing:1px;
     color:#111827;
+}
+
+.pokemon-modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.pokemon-modal-content{
+    background: white;
+    color: black;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 300px;
+    position: relative;
+}
+
+.pokemon-modal-content img{
+    width: 120px;
+}
+
+#pokemon-modal-close{
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.pokemon-silhouette {
+    pointer-events: none;
 }
 
 
@@ -425,4 +479,241 @@ body {
     0% { box-shadow: 0 0 0px gold; }
     50% { box-shadow: 0 0 25px gold; }
     100% { box-shadow: 0 0 0px gold; }
+}
+
+/* =====================================
+    POKEMON RARITY STYLES
+====================================== */
+
+.rarity-normal{
+    border: 2px solid #9ca3af;
+}
+
+.rarity-rare{
+    border: 2px solid #3b82f6;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+}
+
+.rarity-mythic{
+    border: 2px solid #a855f7;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.7);
+}
+
+
+/* rarity text */
+
+.rarity-label{
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 4px;
+    letter-spacing: 1px;
+}
+
+.rarity-text-normal{
+    color: #6b7280;
+}
+
+.rarity-text-rare{
+    color: #3b82f6;
+}
+
+.rarity-text-mythic{
+    color: #a855f7;
+}
+
+.rarity-text-legendary{
+    color: #facc15;
+}
+
+/* ================================
+    SHINY BADGE
+================================= */
+
+.shiny-badge{
+    font-size: 11px;
+    font-weight: bold;
+    color: #facc15;
+    text-shadow: 0 0 6px gold;
+    margin-top: 3px;
+    animation: shinyGlow 1.5s infinite alternate;
+}
+
+@keyframes shinyGlow{
+    0% { opacity: 0.6 }
+    100% { opacity: 1 }
+}
+
+/* =================================
+    TRAINER CARD
+=================================== */
+
+.trainer-card{
+    max-width: 1100px;
+    margin: 0 auto 30px auto;
+    padding: 30px;
+
+    border-radius: 25px;
+
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+
+    box-shadow: 
+        0 0 30px rgba(0, 0, 0, 0.5),
+        inset 0 2px 5px rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.trainer-header{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.trainer-avatar{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #facc15, #f59e0b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trainer-avatar img{
+    width: 45px;
+}
+
+.trainer-info h2{
+    font-weight: bold;
+}
+
+.trainer-info p{
+    margin: 0;
+    color: #cbd5e1;
+}
+
+.trainer-stats h6{
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.trainer-stats h3{
+    font-weight: bold;
+}
+
+/* =========================
+   ACHIEVEMENTS BADGES
+========================= */
+
+.trainer-achievements{
+    margin:30px auto;
+    max-width:1100px;
+    text-align:center;
+}
+
+.achievement-grid{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+/* Badge */
+
+.achievement-badge{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+}
+
+/* Icon circle */
+
+.badge-icon{
+    width:70px;
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    font-size:28px;
+
+    background:linear-gradient(145deg,#1e293b,#0f172a);
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,0.4),
+        inset 0 2px 5px rgba(255,255,255,0.1);
+
+    transition:transform 0.2s;
+}
+
+.badge-icon:hover{
+    transform:scale(1.1);
+}
+
+.badge-name{
+    font-size:12px;
+    color:white;
+    text-align:center;
+}
+
+/* =========================
+    POKEMON TYPES
+=========================== */
+
+:root{
+    --fire: #ff6b35;
+    --water: #339af0;
+    --grass: #51cf66;
+    --electric: #ffd43b;
+    --rock: #c2a878;
+    --ground: #d4a373;
+    --psychic: #f06595;
+    --poison: #ae3ec9;
+    --fighting: #c92a2a;
+    --flying: #91a7ff;
+    --bug: #82c91e;
+    --ghost: #6741d9;
+    --dragon: #5f3dc4;
+    --normal: #adb5db;
+}
+
+.type-fire{ --type1: var(--fire); }
+.type-water{ --type1: var(--water); }
+.type-grass{ --type1: var(--grass); }
+.type-electric{ --type1: var(--electric); }
+.type-rock{ --type1: var(--rock); }
+.type-ground{ --type1: var(--ground); }
+.type-poison{ --type1: var(--poison); }
+.type-fighting{ --type1: var(--fighting); }
+.type-psychic{ --type1: var(--psychic); }
+.type-flying{ --type1: var(--flying); }
+.type-bug{ --type1: var(--bug); }
+.type-ghost{ --type1: var(--ghost); }
+.type-dragon{ --type1: var(--dragon); }
+.type-normal{ --type1: var(--normal); }
+
+[class*="type-"]{
+    --type2: var(--type1);
+}
+
+.type-fire{ --type1: var(--fire); }
+.type-water{ --type1: var(--water); }
+.type-grass{ --type1: var(--grass); }
+.type-electric{ --type1: var(--electric); }
+.type-rock{ --type1: var(--rock); }
+.type-ground{ --type1: var(--ground); }
+.type-poison{ --type1: var(--poison); }
+.type-psychic{ --type1: var(--psychic); }
+.type-flying{ --type1: var(--flying); }
+.type-bug{ --type1: var(--bug); }
+.type-ghost{ --type1: var(--ghost); }
+.type-dragon{ --type1: var(--dragon); }
+.type-normal{ --type1: var(--normal); }
+
+.pokemon-modal .pokemon-modal-content {
+    background: linear-gradient(145deg, var(--type1), #ffffff);
 }

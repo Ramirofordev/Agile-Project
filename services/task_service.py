@@ -95,7 +95,7 @@ class TaskService:
                 used_pomodoro
             )
 
-            new_pokemon = self.pokemon_service.assign_random_pokemon_to_user(user_id)
+            new_pokemon = self.pokemon_service.assign_random_pokemon_to_user(user_id, user.level)
 
         return updated_task, new_pokemon
 

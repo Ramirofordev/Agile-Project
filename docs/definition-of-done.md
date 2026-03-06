@@ -5,7 +5,7 @@ A user story is considered completed when:
 - The functionality works correctly
 - All acceptance criteria are met
 - It does not break existing features 
-- All automated tests must be pass succesfully (unit and API tests)
+- All automated tests must pass succesfully (unit and API tests)
 - The code is comitted and pushed to the repository
 - Documentation is updated
 - Authentication flows are secure and validated

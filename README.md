@@ -126,7 +126,7 @@ Business rules are enforced exclusively in the Service Layer
 The system follows a clean layered architecture:
 
 - **Flask** -> Controller Layer
-- **TaskService & Authservice** -> Business Logic Layer
+- **TaskService, AuthService, PokemonService & ProfileService** -> Business Logic Layer
 - **Respositories** -> Persistence Layer
 - **Domain Models (Task + User)** -> Domain Layer
 

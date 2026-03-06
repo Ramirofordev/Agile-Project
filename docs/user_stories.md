@@ -231,7 +231,7 @@
 
 #### Acceptance Criteria:
 
-- XP must accumulate accross tasks and Pomodoro sessions 
+- XP must accumulate across tasks and Pomodoro sessions 
 - The system must calculate the XP required for the next level
 - The user level must increase automatically when the threshold is reached
 - The current level must be displayed in the UI

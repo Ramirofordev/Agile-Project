@@ -1,4 +1,4 @@
-function showCaptureAnimation(name, sprite, pokemonId) {
+function showCaptureAnimation(name, sprite, pokemonId, isShiny) {
 
     const overlay = document.getElementById("capture-overlay");
     const img = document.getElementById("capture-sprite");
