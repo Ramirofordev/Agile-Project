@@ -266,6 +266,16 @@ Test use an isolated in-memory SQLite database to prevent affecting production d
 
 --- 
 
+## Disclaimer
+
+This project is a non-commercial educational project created for learning purposes.
+
+Pokémon and related trademarks belong to Nintendo, Game Freak, and The Pokémon Company.
+
+All Pokémon data is retrieved from the public PokeAPI.
+
+---
+
 ## Application Demo
 
 ![Kanban Demo](demo-3.gif)
