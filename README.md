@@ -47,7 +47,7 @@ The project follows a layered architecture and Git version control best practice
 
 ## Agile Development Process
 
-This project was built incrementally across 6 structured sprints.
+This project was built incrementally across 8 structured sprints.
 
 ### 🟦 Sprint 1 - Core Architecture & CRUD
 
@@ -120,6 +120,23 @@ Business rules are enforced exclusively in the Service Layer
 - XP progress bar visualization
 - Trainer profile page with productivity statistics
 - Personal Pokemon collection display
+
+---
+
+### 🟦 Sprint 7 - Pokedex System & Collection Improvements
+
+- Full Pokedex visualization (1-151 Pokemon)
+- Captured Pokemon appear with name, sprite, and rarity indicators
+- Non-captured Pokemon appear as silhouettes
+- Interactive Pokemon detail modal with:
+    - Pokemon type
+    - Height
+    - Weight
+    - Abilities
+- Dynamic styling based on Pokemon types
+- Highlight newly captured Pokemon
+- Refactor of PokemonService to use PokemonRepository
+- Improved architecture separation between service and persitance layers
 
 ## Architecture
 
