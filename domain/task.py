@@ -13,6 +13,7 @@ class Task(db.Model):
     manual_priority = db.Column(db.Boolean, default = False)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable = True)
 
     def __repr__(self):
         return f"<Task {self.title}>"
