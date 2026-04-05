@@ -12,12 +12,12 @@ class TaskService:
         self.pokemon_service = PokemonService()
         self.user_progress_service = UserProgressService()
 
-    def create_task(self, title, description, user_id):
+    def create_task(self, title, description, user_id, project_id: None):
         # Validations
         if not title:
             raise ValueError("The task must have a title")
         
-        task = Task(title = title, description = description, user_id = user_id)
+        task = Task(title = title, description = description, user_id = user_id, project_id = project_id)
         self.repository.add(task)
 
         return task

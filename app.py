@@ -5,6 +5,7 @@ from services.task_service import TaskService
 from services.auth_service import AuthService
 from services.user_progress_services import UserProgressService
 from services.profile_service import ProfileService
+from services.project_service import ProjectService
 from infraestructure.repositories.user_repository import UserRepository
 from domain.user import User
 
@@ -34,6 +35,7 @@ def create_app(test_config=None):
     auth_service = AuthService(UserRepository())
     user_progress_service = UserProgressService()
     profile_service = ProfileService()
+    project_service = ProjectService()
 
     # -------------------------
     # Flask-Login loader
@@ -117,6 +119,39 @@ def create_app(test_config=None):
     def logout():
         logout_user()
         return redirect(url_for("login"))
+    
+    # -------------------------
+    # Project
+    # -------------------------
+    
+    @app.route("/projects", methods = ["GET"])
+    @login_required
+    def list_projects():
+        projects = project_service.list_projects(current_user.id)
+        return render_template("pages/projects.html", projects = projects)
+    
+    @app.route("/projects", methods = ["POST"])
+    @login_required
+    def create_project():
+        try:
+            project_service.create_project(
+                request.form["name"],
+                request.form.get("description", ""),
+                current_user.id
+            )
+        except ValueError as e:
+            flash(str(e), "danger")
+
+        return redirect(url_for("list_projects"))
+    
+    @app.route
+    @login_required
+    def view_project(project_id):
+        try:
+            project = project_service.get_project(project_id, current_user.id)
+            return render_template("pages/product_detail.html", project = project)
+        except ValueError:
+            return redirect(url_for("lists_projects"))
 
     # -------------------------
     # Task CRUD
