@@ -1,6 +1,8 @@
 from domain.task import Task
 from datetime import datetime
 from domain.user import User
+from domain.context import Context
+from domain.project import Project
 from infraestructure.db import db
 from infraestructure.repositories.task_repository import TaskRepository
 from services.pokemon_services import PokemonService
@@ -12,12 +14,24 @@ class TaskService:
         self.pokemon_service = PokemonService()
         self.user_progress_service = UserProgressService()
 
-    def create_task(self, title, description, user_id, project_id: None):
+    def create_task(self, title, description, user_id, project_id = None, context_id = None):
         # Validations
         if not title:
             raise ValueError("The task must have a title")
         
-        task = Task(title = title, description = description, user_id = user_id, project_id = project_id)
+        # Optional: validate project ownership
+        if project_id:
+            project = db.session.get(Project, project_id)
+            if not project or project.user_id != user_id:
+                raise ValueError("Invalid project")
+            
+        # Optional: validate context ownership
+        if context_id:
+            context = db.session.get(Context, context_id)
+            if not context or context.user_id != user_id:
+                raise ValueError("Invalid context")
+
+        task = Task(title = title, description = description, user_id = user_id, project_id = project_id, context_id = context_id)
         self.repository.add(task)
 
         return task

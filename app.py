@@ -6,6 +6,7 @@ from services.auth_service import AuthService
 from services.user_progress_services import UserProgressService
 from services.profile_service import ProfileService
 from services.project_service import ProjectService
+from services.context_service import ContextService
 from infraestructure.repositories.user_repository import UserRepository
 from domain.user import User
 
@@ -36,6 +37,7 @@ def create_app(test_config=None):
     user_progress_service = UserProgressService()
     profile_service = ProfileService()
     project_service = ProjectService()
+    context_service = ContextService()
 
     # -------------------------
     # Flask-Login loader
@@ -144,7 +146,7 @@ def create_app(test_config=None):
 
         return redirect(url_for("list_projects"))
     
-    @app.route
+    @app.route("/projects/<int:project_id>")
     @login_required
     def view_project(project_id):
         try:
@@ -209,7 +211,7 @@ def create_app(test_config=None):
 
         return render_template("pages/edit.html", task = task)
 
-    @app.route("/delete/<int:task_id>", methods=["POST"])
+    @app.route("/delete/<int:task_id>", methods = ["POST"])
     @login_required
     def delete_task(task_id):
         try:
@@ -218,6 +220,40 @@ def create_app(test_config=None):
             pass
 
         return redirect(url_for("index"))
+    
+    # -------------------------
+    # Task's Context
+    # -------------------------
+
+    @app.route("/contexts", methods = ["GET"])
+    @login_required
+    def list_contexts():
+        contexts = context_service.list_contexts(current_user.id)
+        return render_template("pages/contexts.html", contexts = contexts)
+    
+    @app.route("/contexts", methods = ["POST"])
+    @login_required
+    def create_context():
+        try:
+            context_service.create_context(
+                request.form["name"],
+                current_user.id
+            )
+        except ValueError as e:
+            flash(str(e), "danger")
+
+        return redirect(url_for("list_contexts"))
+    
+    @app.route("/contexts/delete/<int:context_id>", methods = ["POST"])
+    @login_required
+    def delete_context(context_id):
+        try:
+            context_service.delete_context(context_id, current_user.id)
+        except ValueError:
+            pass
+
+        return redirect(url_for("list_contexts"))
+
 
     # -------------------------
     # Drag & Drop Status Change

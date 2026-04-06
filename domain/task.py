@@ -14,6 +14,7 @@ class Task(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable = True)
+    context_id = db.Column(db.Integer, db.ForeignKey("contexts.id"), nullable = True)
 
     def __repr__(self):
         return f"<Task {self.title}>"
