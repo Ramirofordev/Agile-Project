@@ -30,6 +30,23 @@ class TaskRepository:
 
     def get_by_id(self, task_id: int):
         return db.session.get(Task, task_id)
+    
+    def get_by_context(self, user_id, context_id):
+        return Task.query.filter_by(user_id = user_id, context_id = context_id).all()
+    
+    def get_by_project(self, user_id, project_id):
+        return Task.query.filter_by(user_id = user_id, project_id = project_id).all()
+    
+    def get_filtered(self, user_id, project_id = None, context_id = None):
+        query = Task.query.filter_by(user_id = user_id)
+
+        if project_id:
+            query = query.filter_by(project_id = project_id)
+
+        if context_id:
+            query = query.filter_by(context_id = context_id)
+
+        return query.all()
 
     def get_all(self):
         return Task.query.all()

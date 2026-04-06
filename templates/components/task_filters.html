@@ -1,0 +1,37 @@
+<select class="form-select w-auto"
+        onchange="updateFilters('project', this.value)">
+    <option value="">All Projects</option>
+
+    {% for project in projects %}
+        <option value="{{ project.id }}"
+        {% if project.id == active_project %}selected{% endif %}>
+            📁 {{ project.name }}
+        </option>
+    {% endfor %}
+</select>
+
+<select class="form-select w-auto"
+        onchange="updateFilters('context', this.value)">
+    <option value="">All Contexts</option>
+
+    {% for context in contexts %}
+        <option value="{{ context.id }}"
+        {% if context.id == active_context %}selected{% endif %}>
+            🧠 {{ context.name }}
+        </option>
+    {% endfor %}
+</select>
+
+<script>
+    function updateFilters(type, value) {
+        const url = new URL(window.location.href);
+
+        if (value) {
+            url.searchParams.set(type, value);
+        } else {
+            url.searchParams.delete(type);
+        }
+
+        window.location.href = url.toString();
+    }
+</script>

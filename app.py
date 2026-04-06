@@ -54,9 +54,30 @@ def create_app(test_config=None):
     @app.route("/")
     @login_required
     def index():
-        tasks = task_service.list_tasks(current_user.id)
-        return render_template("pages/dashboard.html", tasks=tasks, user = current_user)
+        project_id = request.args.get("project")
+        context_id = request.args.get("context")
 
+        project_id = int(project_id) if project_id else None
+        context_id = int(context_id) if context_id else None
+
+        tasks = task_service.list_tasks_filtered(
+            current_user.id,
+            project_id,
+            context_id
+        )
+
+        projects = project_service.list_projects(current_user.id)
+        contexts = context_service.list_contexts(current_user.id)
+
+        return render_template(
+            "pages/dashboard.html",
+            tasks = tasks,
+            projects = projects,
+            contexts = contexts,
+            user = current_user,
+            active_project = project_id,
+            active_context = context_id
+        )
     @app.route("/profile")
     @login_required
     def profile():
@@ -123,13 +144,19 @@ def create_app(test_config=None):
         return redirect(url_for("login"))
     
     # -------------------------
-    # Project
+    # Project CRUD 
     # -------------------------
     
     @app.route("/projects", methods = ["GET"])
     @login_required
     def list_projects():
         projects = project_service.list_projects(current_user.id)
+        
+        # add task count
+        for project in projects:
+            project.total_tasks = len(project.tasks)
+            project.completed_tasks = len([t for t in project.tasks if t.status == "done"])
+
         return render_template("pages/projects.html", projects = projects)
     
     @app.route("/projects", methods = ["POST"])
@@ -146,14 +173,44 @@ def create_app(test_config=None):
 
         return redirect(url_for("list_projects"))
     
+    @app.route("/projects/edit/<int:project_id>", methods = ["POST"])
+    @login_required
+    def edit_project(project_id):
+        try:
+            project_service.update_project(
+                project_id,
+                request.form["name"],
+                request.form.get("description", ""),
+                current_user.id
+            )
+        except ValueError as e:
+            flash(str(e), "danger")
+
+        return redirect(url_for("list_projects"))
+    
+    @app.route("/projects/delete/<int:project_id>", methods = ["POST"])
+    @login_required
+    def delete_project(project_id):
+        try:
+            project_service.delete_project(project_id, current_user.id)
+        except ValueError:
+            pass
+
+        return redirect(url_for("list_projects"))
+    
     @app.route("/projects/<int:project_id>")
     @login_required
     def view_project(project_id):
         try:
             project = project_service.get_project(project_id, current_user.id)
-            return render_template("pages/product_detail.html", project = project)
+
+            tasks = task_service.list_tasks_by_project(current_user.id, project_id)
+            projects = project_service.list_projects(current_user.id)
+            contexts = context_service.list_contexts(current_user.id)
+
+            return render_template("pages/project_detail.html", project = project, tasks = tasks, projects = projects, contexts = contexts, user = current_user, active_project = project_id)
         except ValueError:
-            return redirect(url_for("lists_projects"))
+            return redirect(url_for("list_projects"))
 
     # -------------------------
     # Task CRUD
@@ -166,7 +223,9 @@ def create_app(test_config=None):
             task_service.create_task(
                 request.form["title"],
                 request.form.get("description", ""),
-                current_user.id
+                current_user.id,
+                request.form.get("project_id") or None,
+                request.form.get("context_id") or None
             )
         except ValueError as e:
             flash(str(e), "danger")
@@ -253,7 +312,6 @@ def create_app(test_config=None):
             pass
 
         return redirect(url_for("list_contexts"))
-
 
     # -------------------------
     # Drag & Drop Status Change

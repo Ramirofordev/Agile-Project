@@ -18,6 +18,28 @@ class ProjectService:
         self.repository.add(project)
         return project
     
+    def update_project(self, project_id, name, description, user_id):
+        project = self.repository.get_by_id(project_id)
+
+        if not project or project.user_id != user_id:
+            raise ValueError("Project not found")
+        
+        if not name or not name.strip():
+            raise ValueError("Project must have a name")
+        
+        project.name = name.strip()
+        project.description = description
+
+        return project
+    
+    def delete_project(self, project_id, user_id):
+        project = self.repository.get_by_id(project_id)
+
+        if not project or project.user_id != user_id:
+            raise ValueError("Project not found")
+        
+        return self.repository.delete(project_id)
+    
     def list_projects(self, user_id):
         return self.repository.get_all_by_user(user_id)
     

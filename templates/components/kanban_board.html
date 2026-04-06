@@ -3,6 +3,28 @@
 
     <h1 class = "text-center mb-4">⚔️ TRAINER TASK AREA ⚔️</h1>
 
+    <div class = "mb-3 text-center">
+        {% if active_project %}
+            <span class = "badge bg-primary">
+                📁 Project:
+                {{ projects | selectattr("id", "equalto", active_project) | map(attribute="name") | first}}
+            </span>
+        {% endif %}
+
+        {% if active_context %}
+            <span class = "badge bg-secondary">
+                🧠 Context: 
+                {{ contexts | selectattr("id", "equalto", active_context) | map(attribute="name") | first }}
+            </span>
+        {% endif %}
+
+        {% if active_project or active_context %}
+            <a href = "/" class = "btn btn-outline-light btn-sm ms-2">
+                Clear Filters
+            </a>
+        {% endif %}
+    </div>
+
     <!-- Add Task Form -->
     <div class = "card mb-4 shadow-sm">
         <div class = "card-body">
@@ -13,12 +35,34 @@
                 <div class = "col-lg-4 col-md-12">
                     <input type = "text" name = "description" class = "form-control" placeholder = "Description">
                 </div>
+                <div class = "col-md-2">
+                    <select name = "project_id" class = "form-select">
+                        <option value = "">No Project</option>
+                        {% for project in projects %}
+                            <option value = "{{ project.id }}">{{ project.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class = "col-md-2">
+                    <select name = "context_id" class = "form-select">
+                        <option value = "">No Context</option>
+                        {% for context in contexts %}
+                            <option value = "{{ context.id }}">{{ context.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class = "col-md-2 d-grid">
                     <button type = "submit" class = "btn btn-primary">Add Task</button>
                 </div>
             </form>
         </div>
     </div>
+
+    {% if not tasks %}
+        <div class = "text-center mt-4 mb-4">
+            <h5>No tasks found with current filters</h5>
+        </div>
+    {% endif %}
 
     <div class = "row">  
 
@@ -34,6 +78,18 @@
                     <div class = "card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}">
                         <div class = "card-body">
                             <h5>{{ task.title }}</h5>
+
+                            {% if task.project %}
+                                <div class = "badge bg-primary mb-1">
+                                    📁 {{ task.project.name }}
+                                </div>
+                            {% endif %}
+
+                            {% if task.context %}
+                                <div class = "badge bg-secondary mb-2">
+                                    🧠 {{ task.context.name }}
+                                </div>
+                            {% endif %}
 
                             <div class = "task-priority priority-{{ task.priority }}">
                                 {% if task.priority == "high" %}

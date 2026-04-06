@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class = "container mt-4">
+
+    <div class = "text-center mb-3">
+        <h2>📁 {{ project.name }}</h2>
+        <p class = "text-muted">{{ project.description or "No description" }}</p>
+
+        <a href = "/projects" class = "btn btn-outline-light btn-sm">
+            <- Back to Projects
+        </a>
+    </div>
+</div>
+
+<hr class = "mb-4">
+
+{% include "components/kanban_board.html" %}
+
+{% endblock %}

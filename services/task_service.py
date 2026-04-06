@@ -160,3 +160,12 @@ class TaskService:
         db.session.commit()
 
         return tasks
+    
+    def list_tasks_by_project(self, user_id, project_id):
+        return self.repository.get_by_project(user_id, project_id)
+    
+    def list_tasks_by_context(self, user_id, context_id):
+        return self.repository.get_by_context(user_id, context_id)
+    
+    def list_tasks_filtered(self, user_id, project_id = None, context_id = None):
+        return self.repository.get_filtered(user_id, project_id, context_id)
