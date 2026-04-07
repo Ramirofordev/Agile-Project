@@ -173,7 +173,15 @@ Business rules are enforced exclusively in the Service Layer
 The system follows a clean layered architecture:
 
 - **Flask** -> Controller Layer
-- **TaskService, AuthService, PokemonService & ProfileService** -> Business Logic Layer
+- **Service Layer** -> Business Logic Layer:
+    - TaskService
+    - ProjectService
+    - ContextService
+    - AuthService
+    - PokemonService
+    - ProfileService 
+    - UserProgressService
+
 - **Respositories** -> Persistence Layer
 - **Domain Models (Task, User, Pokemon)** -> Domain Layer
 
@@ -196,25 +204,33 @@ flowchart TD
     B --> C[Service Layer]
 
     C --> D[TaskService]
-    C --> E[AuthService]
-    C --> F[PokemonService]
-    C --> G[ProfileService]
-    C --> H[UserProgressService]
+    C --> E[ProjectService]
+    C --> F[ContextService]
+    C --> G[AuthService]
+    C --> H[PokemonService]
+    C --> I[ProfileService]
+    C --> J[UserProgressService]
 
-    D --> I[Repositories]
-    E --> I
-    F --> I
-    G --> I
+    D --> K[Repositories]
+    E --> K
+    F --> K
+    G --> K
+    H --> K
+    I --> K
 
-    I --> J[TaskRepository]
-    I --> K[UserRepository]
-    I --> L[PokemonRepository]
+    K --> L[TaskRepository]
+    K --> M[UserRepository]
+    K --> N[ProjectRepository]
+    K --> O[ContextRepository]
+    K --> P[PokemonRepository]
 
-    J --> M[(SQLite Database)]
-    K --> M
-    L --> M
+    L --> Q[(SQLite Database)]
+    M --> Q
+    N --> Q
+    O --> Q
+    P --> Q
 
-    F --> N[External PokeAPI]
+    H --> R[External PokeAPI]
 
 ```
 ---
@@ -224,7 +240,12 @@ flowchart TD
 This project follows a layered architecture designed to enforce separation of concerns and maintain clear boundaries between application layers.
 
 - **Controller Layer** handles HTTP requests and responses
-- **Service Layer** contains business logic and workflow rules
+- **Service Layer** contains business logic including:
+    - Task lifecycle management
+    - Project organization
+    - Context classification
+    - Progress calculation
+    - Gamification mechanics (XP, rewards)
 - **Repository Layer** manages persistence and database interaction
 - **Domain Layer** defines core entities of the system
 
