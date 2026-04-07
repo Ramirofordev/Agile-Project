@@ -389,8 +389,8 @@ body {
 
 .pomodoro-container {
     position:relative;
-    width:160px;
-    height:160px;
+    width:220px;
+    height:220px;
     margin:0 auto;
 }
 
@@ -415,7 +415,7 @@ body {
     top:50%;
     left:50%;
     transform:translate(-50%,-60%);
-    font-size:22px;
+    font-size:32px;
     font-weight:bold;
 }
 
