@@ -154,8 +154,11 @@ def create_app(test_config=None):
         
         # add task count
         for project in projects:
-            project.total_tasks = len(project.tasks)
-            project.completed_tasks = len([t for t in project.tasks if t.status == "done"])
+            total, completed, progress = project_service.calculate_progress(project.tasks)
+
+            project.total_tasks = total
+            project.completed_tasks = completed
+            project.progress = progress
 
         return render_template("pages/projects.html", projects = projects)
     
@@ -203,8 +206,15 @@ def create_app(test_config=None):
     def view_project(project_id):
         try:
             project = project_service.get_project(project_id, current_user.id)
-
+    
             tasks = task_service.list_tasks_by_project(current_user.id, project_id)
+
+            total, completed, progress = project_service.calculate_progress(tasks)
+
+            project.total_tasks = total
+            project.completed_tasks = completed
+            project.progress = progress
+
             projects = project_service.list_projects(current_user.id)
             contexts = context_service.list_contexts(current_user.id)
 
@@ -220,12 +230,18 @@ def create_app(test_config=None):
     @login_required
     def add_task():
         try:
+            project_id = request.form.get("project_id")
+            context_id = request.form.get("context_id")
+
+            project_id = int(project_id) if project_id else None
+            context_id = int(context_id) if context_id else None
+
             task_service.create_task(
                 request.form["title"],
                 request.form.get("description", ""),
                 current_user.id,
-                request.form.get("project_id") or None,
-                request.form.get("context_id") or None
+                project_id,
+                context_id
             )
         except ValueError as e:
             flash(str(e), "danger")
@@ -284,11 +300,6 @@ def create_app(test_config=None):
     # Task's Context
     # -------------------------
 
-    @app.route("/contexts", methods = ["GET"])
-    @login_required
-    def list_contexts():
-        contexts = context_service.list_contexts(current_user.id)
-        return render_template("pages/contexts.html", contexts = contexts)
     
     @app.route("/contexts", methods = ["POST"])
     @login_required
@@ -301,7 +312,7 @@ def create_app(test_config=None):
         except ValueError as e:
             flash(str(e), "danger")
 
-        return redirect(url_for("list_contexts"))
+        return redirect(url_for("index"))
     
     @app.route("/contexts/delete/<int:context_id>", methods = ["POST"])
     @login_required

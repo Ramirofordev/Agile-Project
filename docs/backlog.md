@@ -28,4 +28,8 @@ Develop a gamified task management web application using Agile methodology that 
 | US-16 | Trainer Profile Page                      | High     | 6      | Done     |
 | US-16 | Trainer Profile Page (Enhancement)        | High     | 7      | Done     |
 |       | Pokedex Visualization and Interaction     | Medium   | 7      | Done     |
+| US-17 | Project Management System                 | High     | 8      | Done     |
+| US-18 | Task Context Classification               | High     | 8      | Done     |
+| US-19 | Project Progress Tracking                 | Medium   | 8      | Done     |
+| US-20 | Project Detail View (Kanban scoped)       | Medium   | 8      | Done     |
  

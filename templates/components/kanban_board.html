@@ -29,13 +29,13 @@
     <div class = "card mb-4 shadow-sm">
         <div class = "card-body">
             <form action = "/add" method = "post" class = "row g-2">
-                <div class = "col-md-4">
+                <div class = "col-12 col-md-4">
                     <input type = "text" name = "title" class = "form-control" placeholder = "Title" required>
                 </div>
-                <div class = "col-lg-4 col-md-12">
+                <div class = "col-12 col-md-4">
                     <input type = "text" name = "description" class = "form-control" placeholder = "Description">
                 </div>
-                <div class = "col-md-2">
+                <div class = "col-12 col-md-2">
                     <select name = "project_id" class = "form-select">
                         <option value = "">No Project</option>
                         {% for project in projects %}
@@ -43,7 +43,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class = "col-md-2">
+                <div class = "col-12 col-md-2">
                     <select name = "context_id" class = "form-select">
                         <option value = "">No Context</option>
                         {% for context in contexts %}
@@ -51,8 +51,8 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class = "col-md-2 d-grid">
-                    <button type = "submit" class = "btn btn-primary">Add Task</button>
+                <div class = "col-12 text-center mt-2">
+                    <button type = "submit" class = "btn btn-primary px-5">Add Task</button>
                 </div>
             </form>
         </div>
@@ -64,10 +64,10 @@
         </div>
     {% endif %}
 
-    <div class = "row">  
+    <div class = "row g-3">  
 
         <!-- TODO COLUMN -->
-        <div class = "col-lg-4 col-md-12">
+        <div class = "col-lg-4 col-md-6 col-12">
             <div class = "card shadow-sm kanban-column">
                 <div class = "card-header text-center pokemon-header-todo">
                     TODO (<span class = "count">{{ tasks|selectattr("status", "equalto", "todo")|list|length }}</span>)
@@ -126,7 +126,7 @@
         </div>
 
         <!-- DOING COLUMN -->
-        <div class = "col-md-4">
+        <div class = "col-lg-4 col-md-6 col-12">
             <div class = "card shadow-sm kanban-column">
                 <div class = "card-header text-center pokemon-header-doing">
                     DOING (<span class = "count">{{ tasks|selectattr("status", "equalto", "doing")|list|length }}</span>)
@@ -173,7 +173,7 @@
         </div>
 
         <!-- DONE COLUMN -->
-        <div class = "col-lg-4 col-md-12">
+        <div class = "col-lg-4 col-md-6 col-12">
             <div class = "card shadow-sm kanban-column">
                 <div class = "card-header text-center pokemon-header-done">
                     DONE (<span class = "count">{{ tasks|selectattr("status", "equalto", "done")|list|length }}</span>)

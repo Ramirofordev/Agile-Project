@@ -1,31 +1,45 @@
-<select class="form-select w-auto"
-        onchange="updateFilters('project', this.value)">
-    <option value="">All Projects</option>
+<div class = "d-flex flex-column flex-md-row justify-content-center gap-2 mb-4">
 
-    {% for project in projects %}
-        <option value="{{ project.id }}"
-        {% if project.id == active_project %}selected{% endif %}>
-            📁 {{ project.name }}
-        </option>
-    {% endfor %}
-</select>
+    <select class = "form-select w-auto" onchange = "updateFilters('project', this.value)">
+        <option value = "">📁 All Projects</option>
 
-<select class="form-select w-auto"
-        onchange="updateFilters('context', this.value)">
-    <option value="">All Contexts</option>
+        {% for project in projects %}
+            <option value = "{{ project.id }}"
+            {% if project.id == active_project %}selected{% endif %}>
+                📁 {{ project.name }}
+            </option>
+        {% endfor %}
+        <option value = "create_project">+ Create Project</option>
+    </select>
 
-    {% for context in contexts %}
-        <option value="{{ context.id }}"
-        {% if context.id == active_context %}selected{% endif %}>
-            🧠 {{ context.name }}
-        </option>
-    {% endfor %}
-</select>
+    <select class = "form-select w-auto" onchange = "updateFilters('context', this.value)">
+        <option value = "">🧠 All Context</option>
+        
+        {% for context in contexts %}
+            <option value = "{{ context.id }}" 
+            {% if context.id == active_context %}selected{% endif %}>
+                🧠 {{ context.name }}
+            </option>
+        {% endfor %}
+        <option value = "create_context">+ Create Context</option>
+    </select>
+</div>
 
 <script>
     function updateFilters(type, value) {
-        const url = new URL(window.location.href);
+        if (value == "create_project") {
+            const modal = new bootstrap.Modal(document.getElementById("createProjectModal"));
+            modal.show();
+            return;
+        }
 
+        if (value == "create_context") {
+            const modal = new bootstrap.Modal(document.getElementById("createContextModal"));
+            modal.show();
+            return;
+        }
+
+        const url = new URL(window.location.href);
         if (value) {
             url.searchParams.set(type, value);
         } else {

@@ -256,3 +256,68 @@
 - The profile must display all captured Pokemon
 - Pokemon must appear in a grid-based layout
 - Newly captured Pokemon must be visually highlighted
+
+---
+
+## US-17 - Project Management System
+
+**As a** user
+**I want** to create and manage projects
+**So that** I can group related tasks and organize my work better
+
+#### Acceptance Criteria:
+- A project must have a name (required) and optional description
+- The user must be able to create a project
+- The user must be able to view a list of projects
+- Tasks must be assignable to a project
+- Only the owner can access their projects
+
+---
+
+## US-18 - Task Context Classification
+
+**As a** user
+**I want** to assign a context to tasks
+**So that** I know where or how I can complete them
+
+#### Acceptance Criteria:
+- A task can have an optional context
+- Contexts must belong to the user
+- The user must be able to create contexts
+- Tasks must display their context in the UI
+- Tasks must be filterable by context
+
+---
+
+## US-19 - Project Progress Tracking
+
+**As a** user
+**I want** to see the progress of a project
+**So that** I can track completion status
+
+
+#### Acceptance Criteria:
+- Progress must be calculated based on completed tasks
+- Progress must be displayed as a percentage
+- The UI must show:
+    - Total tasks
+    - Completed tasks
+- Progress must update when task status changes
+
+---
+
+## US-20 - Project Detail View
+
+**As a** user
+**I want** to view a specific project
+**So that** I can manage its tasks in isolation
+
+#### Acceptance Criteria:
+- The user must be able to open a project detail page
+- The page must display:
+    - Project name and description
+    - Project progress
+- The page must include a Kanban board
+- Only tasks belonging to the project must be displayed
+
+---

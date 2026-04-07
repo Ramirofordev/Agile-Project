@@ -389,8 +389,8 @@ body {
 
 .pomodoro-container {
     position:relative;
-    width:220px;
-    height:220px;
+    width:160px;
+    height:160px;
     margin:0 auto;
 }
 
@@ -415,7 +415,7 @@ body {
     top:50%;
     left:50%;
     transform:translate(-50%,-60%);
-    font-size:32px;
+    font-size:22px;
     font-weight:bold;
 }
 
@@ -716,4 +716,33 @@ body {
 
 .pokemon-modal .pokemon-modal-content {
     background: linear-gradient(145deg, var(--type1), #ffffff);
+}
+
+/* PROJECTS */
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* =========================
+   RESPONSIVE FIXES
+========================= */
+
+/* Tablet */
+@media (max-width: 992px){
+    .pokemon-grid{
+        grid-template-columns: repeat(4,1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 576px){
+    .pokemon-grid{
+        grid-template-columns: repeat(2,1fr);
+    }
 }

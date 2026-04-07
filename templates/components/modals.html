@@ -1,0 +1,48 @@
+<!-- CREATE PROJECT -->
+<div class = "modal fade" id = "createProjectModal" tabindex = "-1">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+
+            <div class = "modal-header">
+                <h5>Create Project</h5>
+                <button class = "btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action = "/projects" method = "POST">
+                <div class = "modal-body">
+                    <input type = "text" name = "name" class = "form-control mb-3" placeholder = "Project name" required>
+                    <input type = "text" name = "description" class = "form-control" placeholder = "Description">
+                </div>
+
+                <div class = "modal-footer">
+                    <button class = "btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class = "btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- CREATE CONTEXT -->
+<div class = "modal fade" id = "createContextModal" tabindex = "-1">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+
+            <div class = "modal-header">
+                <h5>Create Context</h5>
+                <button class = "btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action = "/contexts" method = "POST">
+                <div class = "modal-body">
+                    <input type = "text" name = "name" class = "form-control" placeholder = "Context name" required>
+                </div>
+
+                <div class = "modal-footer">
+                    <button class = "btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class = "btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

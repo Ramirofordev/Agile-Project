@@ -1,12 +1,14 @@
-# Agile Task Manager
+# Gamified Productivity System (Agile Scrum Project)
 
 ## Project Overview
 
-This project is a Task Management Web Application developed using Agile methodology (Scrum).
+This project is a gamified productivity system developed using Agile methodology (Scrum).
 
-The objective is to build a scalable and well-structured system that allows users to manage tasks through workflow displayed in a Kanban board.
+It combines task management, project organization, and RPG-style progression mechanics to create and engaging productivity experience.
 
-The project follows a layered architecture and Git version control best practices.
+Users can manage tasks through a Kanban board, organize them into projects, classify them by context, and earns rewards such as XP and Pokemon.
+
+The system is designed with a clean layered architecture and follows best practices for scalability and maintainability.
 
 ---
 
@@ -18,6 +20,23 @@ The project follows a layered architecture and Git version control best practice
 - Enforce business rules in a dedicated Service Layer
 - Maintain proper documentation
 - Use Git with structured commits and branches
+
+---
+
+## Key Features
+
+- Kanban-based task management with controlled workflow
+- Project-based task organization
+- Context-aware task classification
+- Project progress tracking
+- Dedicated project views with scoped Kanban boards
+- Drag & drop task interaction (SortableJS)
+- XP and level progression system
+- Pokemon reward system (PokeAPI integration)
+- Pomodoro productivity timer
+- Trainer profile with statistics and Pokedex
+- Fully responsive UI (mobile, tablet, desktop)
+- REST API for external integrations
 
 ---
 
@@ -139,6 +158,15 @@ Business rules are enforced exclusively in the Service Layer
 - Improved architecture separation between service and persitance layers
 
 ---
+
+### 🟦 Sprint 8 - Project System & Responsive UI
+
+- Project-based task organization
+- Context classification for tasks
+- Advanced filtering system (project + context)
+- Project progress tracking
+- Dedicated UI across devices (mobile, tablet, desktop)
+- UI/UX improvements for scabalitity and usability
 
 ## Architecture
 

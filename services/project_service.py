@@ -40,6 +40,14 @@ class ProjectService:
         
         return self.repository.delete(project_id)
     
+    def calculate_progress(self, tasks):
+        total = len(tasks)
+        completed = len([t for t in tasks if t.status == "done"])
+
+        progress = int((completed / total) * 100) if total > 0 else 0
+
+        return total, completed, progress
+    
     def list_projects(self, user_id):
         return self.repository.get_all_by_user(user_id)
     
