@@ -4,19 +4,21 @@
     <h1 class = "text-center mb-4">⚔️ TRAINER TASK AREA ⚔️</h1>
 
     <div class = "mb-3 text-center">
-        {% if active_project %}
-            <span class = "badge bg-primary">
-                📁 Project:
-                {{ projects | selectattr("id", "equalto", active_project) | map(attribute="name") | first}}
-            </span>
-        {% endif %}
-
-        {% if active_context %}
-            <span class = "badge bg-secondary">
-                🧠 Context: 
-                {{ contexts | selectattr("id", "equalto", active_context) | map(attribute="name") | first }}
-            </span>
-        {% endif %}
+        {% set current_projects = projects | selectattr("id", "equalto", active_project) | list %}
+            {% if active_project %}
+                <span class = "badge bg-primary">
+                    📁 Project:
+                    {{ projects | selectattr("id", "equalto", active_project) | map(attribute="name") | first}}
+                </span>
+            {% endif %}
+        
+        {% set current_context = contexts | selectattr("id", "equalto", active_context) | list %}
+            {% if active_context %}
+                <span class = "badge bg-secondary">
+                    🧠 Context: 
+                    {{ contexts | selectattr("id", "equalto", active_context) | map(attribute="name") | first }}
+                </span>
+            {% endif %}
 
         {% if active_project or active_context %}
             <a href = "/" class = "btn btn-outline-light btn-sm ms-2">

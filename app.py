@@ -57,8 +57,15 @@ def create_app(test_config=None):
         project_id = request.args.get("project")
         context_id = request.args.get("context")
 
-        project_id = int(project_id) if project_id else None
-        context_id = int(context_id) if context_id else None
+        try:
+            project_id = int(project_id)
+        except (TypeError, ValueError):
+            project_id = None
+
+        try:
+            context_id = int(context_id)
+        except (TypeError, ValueError):
+            context_id = None
 
         tasks = task_service.list_tasks_filtered(
             current_user.id,
@@ -78,6 +85,7 @@ def create_app(test_config=None):
             active_project = project_id,
             active_context = context_id
         )
+    
     @app.route("/profile")
     @login_required
     def profile():
