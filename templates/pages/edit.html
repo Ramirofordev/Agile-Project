@@ -2,81 +2,69 @@
 
 {% block content %}
 
-<div class="pokedex-container">
+<div class = "pokedex-container">
+    <div class = "pokedex-screen">
 
-    <div class="pokedex-screen">
+        <h3 class = "text-center mb-4">Edit Task</h3>
 
-        <h3 class="text-center mb-4">✏️ EDIT TASK</h3>
+        <form method = "post">
+            <input type = "hidden" name = "_csrf_token" value = "{{ csrf_token() }}">
 
-        <form method="post">
+            <div class = "mb-3">
+                <label class = "form-label">Title</label>
 
-            <!-- TITLE -->
-            <div class="mb-3">
-                <label class="form-label">Title</label>
-
-                <input 
-                    type="text"
-                    name="title"
-                    class="form-control"
-                    value="{{ task.title }}"
+                <input
+                    type = "text"
+                    name = "title"
+                    class = "form-control"
+                    value = "{{ task.title }}"
                     required
                 >
             </div>
 
-            <!-- DESCRIPTION -->
-            <div class="mb-3">
-                <label class="form-label">Description</label>
+            <div class = "mb-3">
+                <label class = "form-label">Description</label>
 
                 <textarea
-                    name="description"
-                    class="form-control"
-                    rows="3"
+                    name = "description"
+                    class = "form-control"
+                    rows = "3"
                 >{{ task.description }}</textarea>
             </div>
 
-            <!-- PRIORITY -->
-            <div class="mb-4">
+            <div class = "mb-4">
+                <label class = "form-label">Priority</label>
 
-                <label class="form-label">Priority</label>
-
-                <select name="priority" class="form-select">
-
-                    <option value="low"
+                <select name = "priority" class = "form-select">
+                    <option value = "low"
                     {% if task.priority == "low" %}selected{% endif %}>
                         Low
                     </option>
 
-                    <option value="medium"
+                    <option value = "medium"
                     {% if task.priority == "medium" %}selected{% endif %}>
                         Medium
                     </option>
 
-                    <option value="high"
+                    <option value = "high"
                     {% if task.priority == "high" %}selected{% endif %}>
                         High
                     </option>
-
                 </select>
-
             </div>
 
-            <!-- BUTTONS -->
-            <div class="d-flex justify-content-between">
-
-                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            <div class = "d-flex justify-content-between">
+                <a href = "{{ url_for('index') }}" class = "btn btn-secondary">
                     Back
                 </a>
 
-                <button type="submit" class="btn btn-primary">
+                <button type = "submit" class = "btn btn-primary">
                     Save Changes
                 </button>
-
             </div>
-
         </form>
 
     </div>
-
 </div>
 
 {% endblock %}

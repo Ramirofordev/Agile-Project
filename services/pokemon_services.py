@@ -28,20 +28,26 @@ class PokemonService:
         else:
             random_id = random.choice(available)
         
-        response = requests.get(f"{self.base_url}{random_id}")
+        try:
+            response = requests.get(f"{self.base_url}{random_id}", timeout = 5)
+        except requests.RequestException:
+            return None
 
         if response.status_code != 200:
             return None
 
-        data = response.json()
+        try:
+            data = response.json()
 
-        types = [t["type"]["name"] for t in data["types"]]
+            types = [t["type"]["name"] for t in data["types"]]
 
-        sprite = (
-            data["sprites"]["front_shiny"]
-            if is_shiny
-            else data["sprites"]["front_default"]
-        )
+            sprite = (
+                data["sprites"]["front_shiny"]
+                if is_shiny
+                else data["sprites"]["front_default"]
+            )
+        except (KeyError, TypeError, ValueError):
+            return None
 
         return {
             "dex": random_id,
@@ -52,7 +58,7 @@ class PokemonService:
         }
 
 
-    def assign_random_pokemon_to_user(self, user_id: int, user_level: int):
+    def assign_random_pokemon_to_user(self, user_id: int, user_level: int, commit: bool = True):
         """
         Create and save the pokemon for the user
         """
@@ -67,7 +73,9 @@ class PokemonService:
             pokemon_data = {
                 "dex": 25,
                 "name": "pikachu",
-                "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+                "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+                "type1": "electric",
+                "type2": None
             }
 
         rarity = self.generate_rarity(user_level)
@@ -91,7 +99,7 @@ class PokemonService:
             user_id=user_id
         )
 
-        self.repository.add(new_pokemon)
+        self.repository.add(new_pokemon, commit = commit)
 
         return new_pokemon
 
