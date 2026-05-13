@@ -30,13 +30,16 @@ class ProjectService:
         project.name = name.strip()
         project.description = description
 
-        return project
+        return self.repository.update(project)
     
     def delete_project(self, project_id, user_id):
         project = self.repository.get_by_id(project_id)
 
         if not project or project.user_id != user_id:
             raise ValueError("Project not found")
+
+        for task in project.tasks:
+            task.project_id = None
         
         return self.repository.delete(project_id)
     

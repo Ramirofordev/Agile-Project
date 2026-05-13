@@ -18,13 +18,15 @@ class TaskRepository:
         db.session.commit()
         return task
 
-    def update_status(self, task_id, new_status):
+    def update_status(self, task_id, new_status, commit = True):
         task = db.session.get(Task, task_id)
         if not task:
             return None
         
         task.status = new_status
-        db.session.commit()
+
+        if commit:
+            db.session.commit()
         
         return task
 

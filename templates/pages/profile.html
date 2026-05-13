@@ -5,11 +5,9 @@
 <div class = "pokedex-container">
 
     <div class = "trainer-card">
-
         <div class = "trainer-header">
-
             <div class = "trainer-avatar">
-                <img src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+                <img src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt = "Pokeball">
             </div>
 
             <div class = "trainer-info">
@@ -19,15 +17,14 @@
         </div>
 
         <div class = "trainer-stats row text-center">
-
             <div class = "col">
                 <h6>XP</h6>
                 <h3>{{ user.xp }}</h3>
             </div>
 
-            <div class ="col">
+            <div class = "col">
                 <h6>Tasks Completed</h6>
-                <h3>{{ user.tasks_completed}}</h3>
+                <h3>{{ user.tasks_completed }}</h3>
             </div>
 
             <div class = "col">
@@ -37,129 +34,99 @@
 
             <div class = "col">
                 <h6>Shinies</h6>
-                <h3>✨ {{ shinies }}</h3>
+                <h3>{{ shinies }}</h3>
             </div>
 
             <div class = "col">
                 <h6>Legendary</h6>
-                <h3>⭐ {{ legendary }}</h3>
+                <h3>{{ legendary }}</h3>
             </div>
         </div>
     </div>
 
-    <div class="trainer-achievements">
+    <div class = "trainer-achievements">
+        <h5>Achievements</h5>
 
-        <h5>🏅 Achievements</h5>
-
-        <div class="achievement-grid">
-
+        <div class = "achievement-grid">
             {% for achievement in achievements %}
-
-            <div class="achievement-badge">
-
-                <div class="badge-icon">
+            <div class = "achievement-badge">
+                <div class = "badge-icon">
                     {{ achievement.icon }}
                 </div>
 
-                <div class="badge-name">
+                <div class = "badge-name">
                     {{ achievement.name }}
                 </div>
-
             </div>
-
-
             {% endfor %}
-
         </div>
-
     </div>
 
-        <hr>
+    <div class = "text-center my-4">
+        <h5>Pokedex Progress</h5>
+        <p>{{ captured }} / {{ total_pokemon }} Pokemon</p>
 
-        <div class = "text-center mb-4">
+        <div class = "pokedex-progress-bar" style = "--progress: {{ percent }}%;"></div>
+    </div>
 
-            <h5>📊 Pokedex Progress</h5>
+    <h5 class = "text-center mb-3">Pokedex</h5>
 
-            <p>
-                {{ captured }} / {{ total_pokemon }} Pokemon
-            </p>
-            
-            <div class = "pokedex-progress-bar"
-                style = "--progress: {{ percent }}%;">
+    <div class = "pokemon-grid">
+        {% for pokemon in pokedex %}
+        <div class = "pokemon-card {% if pokemon.captured %} type-{{ pokemon.type1 }} {% if pokemon.type2 %} type-{{ pokemon.type2 }} {% endif %} rarity-{{ pokemon.rarity }} {% endif %}" data-pokemon-dex = "{{ pokemon.dex }}" data-shiny = "{{ pokemon.is_shiny }}">
+
+            {% if pokemon.captured %}
+            <img src = "{{ pokemon.sprite_url }}" alt = "{{ pokemon.name }}">
+
+            <div class = "pokemon-number">
+                #{{ "%03d"|format(pokemon.dex) }}
             </div>
+
+            <div class = "pokemon-name">
+                {{ pokemon.name }}
+            </div>
+
+            {% if pokemon.is_shiny %}
+            <div class = "shiny-badge">
+                SHINY
+            </div>
+            {% endif %}
+
+            <div class = "rarity-label rarity-text-{{ pokemon.rarity }}">
+                {{ pokemon.rarity | capitalize }}
+            </div>
+
+            {% else %}
+            <img
+                src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.dex }}.png"
+                class = "pokemon-silhouette"
+                alt = "Unknown Pokemon">
+
+            <div class = "pokemon-number">
+                #{{ "%03d"|format(pokemon.dex) }}
+            </div>
+
+            <div class = "pokemon-name">
+                ???
+            </div>
+            {% endif %}
 
         </div>
+        {% endfor %}
+    </div>
 
-        <h5 class = "text-center mb-3">📕 POKEDEX</h5>
+    <div id = "pokemon-modal" class = "pokemon-modal hidden">
+        <div class = "pokemon-modal-content">
+            <span id = "pokemon-modal-close">X</span>
 
-        <div class = "pokemon-grid">
+            <img id = "modal-sprite" alt = "Pokemon sprite">
 
-            {% for pokemon in pokedex %}
+            <h3 id = "modal-name"></h3>
 
-            <div class = "pokemon-card {% if pokemon.captured %} type-{{ pokemon.type1 }} {% if pokemon.type2 %} type-{{ pokemon.type2 }} {% endif %} {% endif %}" data-pokemon-dex = "{{ pokemon.dex }}" data-shiny = "{{ pokemon.is_shiny }}">
-
-                {% if pokemon.captured %}
-
-                <img src = "{{ pokemon.sprite_url }}">
-
-                <div class = "pokemon-number">
-                    #{{ "%03d"|format(pokemon.dex) }}
-                </div>
-
-                <div class = "pokemon-name">
-                    {{ pokemon.name }}
-                </div>
-
-                {% if pokemon.is_shiny %}
-                <div class = "shiny-badge">
-                    🌟 SHINY
-                </div>
-                {% endif %}
-
-                <div class = "rarity-label rarity-text-{{ pokemon.rarity }}">
-                    {{ pokemon.rarity | capitalize }}
-                </div>
-
-                {% else %}
-
-                <img
-                    src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.dex }}.png"
-                    class = "pokemon-silhouette">
-
-                <div class = "pokemon-number">
-                    #{{ "%03d"|format(pokemon.dex) }}
-                </div>
-
-                <div class = "pokemon-name">
-                    ???
-                </div>
-                {% endif %}
-
-            </div>
-
-
-            {% endfor %}
-
-        </div>
-
-        <div id = "pokemon-modal" class = "pokemon-modal hidden">
-
-            <div class = "pokemon-modal-content">
-
-                <span id = "pokemon-modal-close">✖️</span>
-
-                <img id = "modal-sprite">
-
-                <h3 id = "modal-name"></h3>
-
-                <p id = "modal-types"></p>
-
-                <p id = "modal-height"></p>
-
-                <p id = "modal-weight"></p>
-                
-                <p id = "modal-abilities"></p>
-            </div>
+            <p id = "modal-types"></p>
+            <p id = "modal-height"></p>
+            <p id = "modal-weight"></p>
+            <p id = "modal-abilities"></p>
         </div>
     </div>
 </div>
@@ -211,15 +178,10 @@
             modal.classList.remove("hidden");
 
             document.getElementById("modal-sprite").src = isShiny ? data.sprites.front_shiny : data.sprites.front_default;
-
             document.getElementById("modal-name").textContent = data.name.toUpperCase();
-
             document.getElementById("modal-types").textContent = "Type: " + data.types.map(t => t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)).join(" / ");
-
             document.getElementById("modal-height").textContent = "Height: " + data.height / 10 + " m";
-
             document.getElementById("modal-weight").textContent = "Weight: " + data.weight / 10 + " kg";
-
             document.getElementById("modal-abilities").textContent = "Abilities: " + data.abilities.map(a => a.ability.name).join(", ");
         });
     });

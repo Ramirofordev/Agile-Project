@@ -3,9 +3,11 @@ from domain.pokemon import Pokemon
 
 class PokemonRepository:
 
-    def add(self, pokemon: Pokemon):
+    def add(self, pokemon: Pokemon, commit = True):
         db.session.add(pokemon)
-        db.session.commit()
+
+        if commit:
+            db.session.commit()
 
     def get_user_pokemon(self, user_id):
         return Pokemon.query.filter_by(user_id = user_id).all()

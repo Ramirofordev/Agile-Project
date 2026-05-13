@@ -94,24 +94,35 @@ class TaskService:
                 f"Invalid transition from {current_status} to {new_status}"
             )
         
-        updated_task = self.repository.update_status(task_id, new_status)
-
         new_pokemon = None
 
-        # If the task it's complete, give the pokemon
-        if new_status == "done":
-            user = User.query.get(user_id)
+        try:
+            updated_task = self.repository.update_status(task_id, new_status, commit = False)
 
-            # Register XP based on priority
-            self.user_progress_service.register_task_completion(
-                user,
-                task.priority,
-                used_pomodoro
-            )
+            # If the task is completed for the first time, grant rewards once.
+            if new_status == "done" and not task.reward_claimed:
+                user = User.query.get(user_id)
 
-            new_pokemon = self.pokemon_service.assign_random_pokemon_to_user(user_id, user.level)
+                self.user_progress_service.register_task_completion(
+                    user,
+                    task.priority,
+                    used_pomodoro,
+                    commit = False
+                )
 
-        return updated_task, new_pokemon
+                new_pokemon = self.pokemon_service.assign_random_pokemon_to_user(
+                    user_id,
+                    user.level,
+                    commit = False
+                )
+                task.reward_claimed = True
+
+            db.session.commit()
+            return updated_task, new_pokemon
+
+        except Exception:
+            db.session.rollback()
+            raise
 
     def auto_adjust_priority(self, task):
         if task.manual_priority:

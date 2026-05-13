@@ -16,10 +16,12 @@ class UserProgressService:
         return int(100 * (level ** 1.5))
     
     # ------ XP MANAGEMENT ------
-    def add_xp(self, user: User, amount: int):
+    def add_xp(self, user: User, amount: int, commit: bool = True):
         user.xp += amount
         self.recalculate_level(user)
-        db.session.commit()
+
+        if commit:
+            db.session.commit()
 
     def recalculate_level(self, user: User):
         """
@@ -36,7 +38,7 @@ class UserProgressService:
 
     # ------ TASK COMPLETION -------
 
-    def register_task_completion(self, user: User, priority: str, used_pomodoro: bool = False):
+    def register_task_completion(self, user: User, priority: str, used_pomodoro: bool = False, commit: bool = True):
 
         xp_map = {
             "low": 10, 
@@ -51,18 +53,18 @@ class UserProgressService:
 
         user.tasks_completed += 1
 
-        self.add_xp(user, xp_gained)
+        self.add_xp(user, xp_gained, commit = commit)
 
         return xp_gained
     
     # ------ POMODORO COMPLETION ------
 
-    def register_pomodoro_completion(self, user: User):
+    def register_pomodoro_completion(self, user: User, commit: bool = True):
 
         user.pomodoro_sessions_completed += 1
 
         xp_gained = 15
 
-        self.add_xp(user, xp_gained)
+        self.add_xp(user, xp_gained, commit = commit)
 
         return xp_gained

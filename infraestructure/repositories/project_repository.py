@@ -11,6 +11,10 @@ class ProjectRepository:
     
     def get_all_by_user(self, user_id):
         return Project.query.filter_by(user_id = user_id).all()
+
+    def update(self, project):
+        db.session.commit()
+        return project
     
     def delete(self, project_id):
         project = self.get_by_id(project_id)

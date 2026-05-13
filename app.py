@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, abort
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user  # type: ignore
 from infraestructure.db import db
 from services.task_service import TaskService
 from services.auth_service import AuthService
@@ -11,13 +11,36 @@ from infraestructure.repositories.user_repository import UserRepository
 from domain.user import User
 
 import os
+import hmac
+import secrets
+import time
+from sqlalchemy import inspect, text
+
+
+def ensure_schema():
+    db.create_all()
+
+    inspector = inspect(db.engine)
+    if "tasks" not in inspector.get_table_names():
+        return
+
+    task_columns = {column["name"] for column in inspector.get_columns("tasks")}
+    if "reward_claimed" not in task_columns:
+        default_value = "0" if db.engine.dialect.name == "sqlite" else "false"
+
+        with db.engine.begin() as connection:
+            connection.execute(
+                text(
+                    f"ALTER TABLE tasks ADD COLUMN reward_claimed BOOLEAN DEFAULT {default_value} NOT NULL"
+                )
+            )
 
 
 def create_app(test_config=None):
 
     app = Flask(__name__)
 
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev_key")
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_urlsafe(32)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     if test_config:
@@ -26,11 +49,42 @@ def create_app(test_config=None):
         db_path = os.path.join(os.getcwd(), "kanban.db")
         app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 
+    app.config.setdefault("CSRF_PROTECT", not app.config.get("TESTING", False))
+
     db.init_app(app)
 
     login_manager = LoginManager()
     login_manager.login_view = "login"
     login_manager.init_app(app)
+
+    def csrf_token():
+        token = session.get("_csrf_token")
+        if not token:
+            token = secrets.token_urlsafe(32)
+            session["_csrf_token"] = token
+        return token
+
+    app.jinja_env.globals["csrf_token"] = csrf_token
+
+    @app.before_request
+    def protect_from_csrf():
+        if not app.config.get("CSRF_PROTECT", True):
+            return
+
+        if request.method not in {"POST", "PUT", "PATCH", "DELETE"}:
+            return
+
+        expected_token = session.get("_csrf_token")
+        received_token = (
+            request.form.get("_csrf_token")
+            or request.headers.get("X-CSRF-Token")
+        )
+
+        if not expected_token or not received_token:
+            return abort(400)
+
+        if not hmac.compare_digest(expected_token, received_token):
+            return abort(400)
 
     task_service = TaskService()
     auth_service = AuthService(UserRepository())
@@ -83,7 +137,8 @@ def create_app(test_config=None):
             contexts = contexts,
             user = current_user,
             active_project = project_id,
-            active_context = context_id
+            active_context = context_id,
+            next_level_xp = user_progress_service.xp_needed_for_next_level(current_user.level)
         )
     
     @app.route("/profile")
@@ -121,6 +176,7 @@ def create_app(test_config=None):
                     request.form["email"],
                     request.form["password"]
                 )
+                session.pop("_csrf_token", None)
                 login_user(user)
                 return redirect(url_for("index"))
             except ValueError as e:
@@ -137,6 +193,7 @@ def create_app(test_config=None):
                     request.form["identifier"],
                     request.form["password"]
                 )
+                session.pop("_csrf_token", None)
                 login_user(user)
                 return redirect(url_for("index"))
             except ValueError as e:
@@ -149,6 +206,7 @@ def create_app(test_config=None):
     @login_required
     def logout():
         logout_user()
+        session.clear()
         return redirect(url_for("login"))
     
     # -------------------------
@@ -271,24 +329,31 @@ def create_app(test_config=None):
     def edit_task(task_id):
         task = task_service.get_task(task_id)
 
+        if not task or task.user_id != current_user.id:
+            return redirect(url_for("index"))
+
         if request.method == "POST":
 
             title = request.form["title"]
             description = request.form["description"]
             priority = request.form["priority"]
 
-            task_service.edit_task(
-                task_id,
-                title,
-                current_user.id,
-                description
-            )
+            try:
+                task_service.edit_task(
+                    task_id,
+                    title,
+                    current_user.id,
+                    description
+                )
 
-            task_service.update_priority(
-                task_id,
-                priority,
-                current_user.id
-            )
+                task_service.update_priority(
+                    task_id,
+                    priority,
+                    current_user.id
+                )
+            except ValueError as e:
+                flash(str(e), "danger")
+                return redirect(url_for("edit_task_form", task_id = task_id))
 
             return redirect(url_for("index"))
 
@@ -330,7 +395,7 @@ def create_app(test_config=None):
         except ValueError:
             pass
 
-        return redirect(url_for("list_contexts"))
+        return redirect(url_for("index"))
 
     # -------------------------
     # Drag & Drop Status Change
@@ -368,7 +433,15 @@ def create_app(test_config=None):
     @app.route("/api/pomodoro/complete", methods = ["POST"])
     @login_required
     def complete_pomodoro():
+        now = time.time()
+        min_seconds = app.config.get("POMODORO_MIN_SECONDS", 20 * 60)
+        last_completed_at = session.get("last_pomodoro_completed_at")
+
+        if last_completed_at and now - last_completed_at < min_seconds:
+            return jsonify({"error": "Pomodoro completed too recently"}), 429
+
         xp_gained = user_progress_service.register_pomodoro_completion(current_user)
+        session["last_pomodoro_completed_at"] = now
 
         return jsonify({
             "xp_gained": xp_gained,
@@ -460,11 +533,21 @@ def create_app(test_config=None):
                 )
 
             if "title" in data:
+                current_task = task_service.get_task(task_id)
+                if not current_task:
+                    raise ValueError("Task not found")
+
+                description = (
+                    data["description"]
+                    if "description" in data
+                    else current_task.description
+                )
+
                 task_service.edit_task(
                     task_id,
                     data["title"],
                     current_user.id,
-                    data.get("description", "")
+                    description
                 )
                 
 
@@ -490,7 +573,7 @@ def create_app(test_config=None):
             return jsonify({"error": "Task not found"}), 404
         
     with app.app_context():
-        db.create_all()
+        ensure_schema()
 
     return app
 
@@ -501,7 +584,7 @@ def create_app(test_config=None):
 if __name__ == "__main__":
     app = create_app()
     with app.app_context():
-        db.create_all()
+        ensure_schema()
     
     port = int(os.environ.get("PORT", 5000))
 

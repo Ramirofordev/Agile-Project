@@ -155,7 +155,7 @@ Business rules are enforced exclusively in the Service Layer
 - Dynamic styling based on Pokemon types
 - Highlight newly captured Pokemon
 - Refactor of PokemonService to use PokemonRepository
-- Improved architecture separation between service and persitance layers
+- Improved architecture separation between service and persistence layers
 
 ---
 
@@ -166,7 +166,7 @@ Business rules are enforced exclusively in the Service Layer
 - Advanced filtering system (project + context)
 - Project progress tracking
 - Dedicated UI across devices (mobile, tablet, desktop)
-- UI/UX improvements for scabalitity and usability
+- UI/UX improvements for scalability and usability
 
 ## Architecture
 
@@ -182,7 +182,7 @@ The system follows a clean layered architecture:
     - ProfileService 
     - UserProgressService
 
-- **Respositories** -> Persistence Layer
+- **Repositories** -> Persistence Layer
 - **Domain Models (Task, User, Pokemon)** -> Domain Layer
 
 This ensures:
@@ -276,7 +276,7 @@ The UI never contains business logic.
     *'venv\Scripts\activate'*
 
 3. Install dependencies:
-    *'pip install -r requirementes.txt'*
+    *'pip install -r requirements.txt'*
 
 4. Run the app:
     *'python app.py'*
@@ -299,7 +299,7 @@ Test use an isolated in-memory SQLite database to prevent affecting production d
 - Clean architecture
 - Separation of concerns
 - Defensive Programming
-- Incremental Agile Deliverey
+- Incremental Agile Delivery
 - Automated Testing
 - Controlled Workflow Validation
 
