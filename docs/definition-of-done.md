@@ -13,3 +13,5 @@ A user story is considered completed when:
 - Business rules are validated at Service Layer
 - External integrations are mocked in tests
 - New features must include automated tests when applicable
+- Database changes must be documented, reviewed and verified before production deployment
+- Production secrets and database credentials must never be committed to the repository

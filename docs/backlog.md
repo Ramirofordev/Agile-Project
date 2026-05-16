@@ -32,4 +32,8 @@ Develop a gamified task management web application using Agile methodology that 
 | US-18 | Task Context Classification               | High     | 8      | Done     |
 | US-19 | Project Progress Tracking                 | Medium   | 8      | Done     |
 | US-20 | Project Detail View (Kanban scoped)       | Medium   | 8      | Done     |
- 
+| US-21 | Configure Supabase PostgreSQL Persistence | High     | 9      | Planned  |
+| US-22 | Replace Local Production SQLite with DATABASE_URL | High | 9 | Planned  |
+| US-23 | Document Deployment Database Configuration | Medium  | 9      | Planned  |
+| US-24 | Evaluate Avatar Storage Migration         | Low      | Future | Planned  |
+  

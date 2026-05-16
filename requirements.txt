@@ -5,3 +5,4 @@ SQLAlchemy
 Werkzeug
 requests
 gunicorn
+psycopg[binary]

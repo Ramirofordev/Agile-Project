@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, UTC
 import pytest
 from werkzeug.security import generate_password_hash
 
-from app import create_app
+from app import create_app, normalize_database_url
 from domain.task import Task
 from domain.user import User
 from infraestructure.db import db
@@ -68,6 +68,31 @@ def test_secret_key_from_env_is_used_outside_testing(monkeypatch):
     })
 
     assert app.config["SECRET_KEY"] == "safe-test-secret"
+
+
+def test_database_url_from_env_is_used_for_production(monkeypatch):
+    monkeypatch.setenv("SECRET_KEY", "safe-test-secret")
+    monkeypatch.setenv("DATABASE_URL", "postgresql://user:pass@db.example.com:5432/appdb")
+
+    app = create_app({
+        "AUTO_ENSURE_SCHEMA": False
+    })
+
+    assert app.config["SQLALCHEMY_DATABASE_URI"] == (
+        "postgresql+psycopg://user:pass@db.example.com:5432/appdb"
+    )
+
+
+def test_database_url_legacy_postgres_scheme_is_normalized():
+    database_url = normalize_database_url("postgres://user:pass@db.example.com:5432/appdb")
+
+    assert database_url == "postgresql+psycopg://user:pass@db.example.com:5432/appdb"
+
+
+def test_database_url_existing_sqlalchemy_driver_is_preserved():
+    database_url = normalize_database_url("postgresql+psycopg://user:pass@db.example.com:5432/appdb")
+
+    assert database_url == "postgresql+psycopg://user:pass@db.example.com:5432/appdb"
 
 
 def test_api_list_tasks_does_not_auto_adjust_priority(app):
