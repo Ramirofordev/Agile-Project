@@ -1,5 +1,5 @@
 from domain.task import Task
-from datetime import datetime
+from datetime import datetime, UTC
 from domain.user import User
 from domain.context import Context
 from domain.project import Project
@@ -81,7 +81,7 @@ class TaskService:
         allowed_transitions = {
             "todo": ["doing"],
             "doing": ["done", "todo"],
-            "done": {"doing"}
+            "done": ["doing"]
         }
 
         current_status = task.status
@@ -100,7 +100,7 @@ class TaskService:
 
         # If the task it's complete, give the pokemon
         if new_status == "done":
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
 
             # Register XP based on priority
             self.user_progress_service.register_task_completion(
@@ -116,8 +116,13 @@ class TaskService:
     def auto_adjust_priority(self, task):
         if task.manual_priority:
             return # Respect manual override    
-        
-        days_old = (datetime.utcnow() - task.created_at).days
+
+        created_at = task.created_at
+
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=UTC)
+
+        days_old = (datetime.now(UTC) - created_at).days
 
         if days_old >= 6:
             task.priority = "high"
@@ -152,6 +157,9 @@ class TaskService:
          return self.repository.get_by_id(task_id)
 
     def list_tasks(self, user_id):
+        return self.repository.get_all_by_user(user_id)
+
+    def refresh_auto_priorities(self, user_id):
         tasks = self.repository.get_all_by_user(user_id)
 
         for task in tasks:

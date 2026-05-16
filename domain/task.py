@@ -1,5 +1,9 @@
 from infraestructure.db import db
-from datetime import datetime
+from datetime import datetime, UTC
+
+
+def utc_now():
+    return datetime.now(UTC)
 
 class Task(db.Model):
     __tablename__ = "tasks"
@@ -9,7 +13,7 @@ class Task(db.Model):
     description = db.Column(db.String(500))
     status = db.Column(db.String(50), default = "todo")
     priority = db.Column(db.String(20), default = "medium")
-    created_at = db.Column(db.DateTime, default = datetime.utcnow)
+    created_at = db.Column(db.DateTime, default = utc_now)
     manual_priority = db.Column(db.Boolean, default = False)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)

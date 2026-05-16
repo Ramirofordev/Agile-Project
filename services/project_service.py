@@ -30,6 +30,8 @@ class ProjectService:
         project.name = name.strip()
         project.description = description
 
+        self.repository.update(project)
+
         return project
     
     def delete_project(self, project_id, user_id):

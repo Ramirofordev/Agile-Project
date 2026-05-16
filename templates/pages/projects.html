@@ -40,6 +40,7 @@
                 </div>
 
                 <form action = "/projects" method = "POST">
+                    <input type = "hidden" name = "csrf_token" value = "{{ csrf_token() }}">
 
                     <div class = "modal-body">
 
@@ -128,6 +129,7 @@
                         
                         <!-- DELETE -->
                         <form action = "/projects/delete/{{ project.id }}" method = "POST" class = "w-50">
+                            <input type = "hidden" name = "csrf_token" value = "{{ csrf_token() }}">
                             <button class = "btn btn-outline-danger btn-sm w-100" onclick = "return confirm('Delete this project?')">
                                 Delete
                             </button>
@@ -148,6 +150,7 @@
                     </div>
 
                     <form action = "/projects/edit/{{ project.id }}" method = "POST">
+                        <input type = "hidden" name = "csrf_token" value = "{{ csrf_token() }}">
                         <div class = "modal-body">
                             <input type = "text" name = "name" value = "{{ project.name }}" class = "form-control mb-3" required>
 

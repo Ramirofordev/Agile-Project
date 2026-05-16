@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    const csrfToken = document.querySelector("meta[name='csrf-token']")?.content || "";
+    const csrfInput = csrfToken
+        ? `<input type="hidden" name="csrf_token" value="${csrfToken}">`
+        : "";
+
     const STATUS_BUTTONS = {
         todo: (id) => `
             <div class="d-grid mb-2">
@@ -9,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <form action="/status/${id}/doing" method="post" class="d-grid">
+                ${csrfInput}
                 <button class="btn btn-warning btn-sm">Start</button>
             </form>
         `,
@@ -21,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <form action="/status/${id}/done" method="post" class="d-grid">
+                ${csrfInput}
                 <button class="btn btn-success btn-sm">Complete</button>
             </form>
         `,
@@ -33,10 +40,12 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <form action="/status/${id}/doing" method="post" class="mb-2 d-grid">
+                ${csrfInput}
                 <button class="btn btn-secondary btn-sm">Reopen</button>
             </form>
 
             <form action="/delete/${id}" method="post" class="d-grid">
+                ${csrfInput}
                 <button class="btn btn-danger btn-sm">Delete</button>
             </form>
         `
@@ -86,7 +95,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch(`/status/${taskId}/${newStatus}`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
                 },
                 body: JSON.stringify({
                     used_pomodoro: false

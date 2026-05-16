@@ -2,7 +2,7 @@ import pytest
 from app import create_app
 from domain.user import User
 from infraestructure.db import db
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 from services.task_service import TaskService
 
 @pytest.fixture
@@ -54,7 +54,7 @@ def test_default_priority(service, test_user1):
 def test_auto_escalation(service, test_user1):
     task = service.create_task("Old task", "", test_user1.id)
 
-    task.created_at = datetime.utcnow() - timedelta(days = 7)
+    task.created_at = datetime.now(UTC) - timedelta(days = 7)
 
     service.auto_adjust_priority(task)
 
@@ -67,7 +67,7 @@ def test_manual_priority_override(service, test_user1):
     service.update_priority(task.id, "low", test_user1.id)
 
     # Days passed
-    task.created_at = datetime.now(timezone.utc) - timedelta(days = 10)
+    task.created_at = datetime.now(UTC) - timedelta(days = 10)
 
     service.auto_adjust_priority(task)
 

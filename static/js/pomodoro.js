@@ -65,8 +65,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function completeFocusPhase() {
 
+        const csrfToken = document.querySelector("meta[name='csrf-token']")?.content || "";
+
         const response = await fetch("/api/pomodoro/complete", {
-            method: "POST"
+            method: "POST",
+            headers: {
+                "X-CSRF-Token": csrfToken
+            }
         });
 
         const data = await response.json();

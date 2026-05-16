@@ -276,9 +276,16 @@ The UI never contains business logic.
     *'venv\Scripts\activate'*
 
 3. Install dependencies:
-    *'pip install -r requirementes.txt'*
+    *'python -m pip install -r requirements.txt'*
 
 4. Run the app:
+
+    Set a secret key before starting the app:
+
+    *'set SECRET_KEY=your-secure-random-value'*
+
+    Then run:
+
     *'python app.py'*
 
 5. Open in browser:
@@ -291,6 +298,18 @@ The UI never contains business logic.
 **Pytest**
 
 Test use an isolated in-memory SQLite database to prevent affecting production data.
+
+If pytest is not installed in your environment, install it separately, then run:
+
+*'python -m pytest'*
+
+---
+
+## API CSRF Notes
+
+Browser forms include a CSRF token automatically. JavaScript requests send the same token in the `X-CSRF-Token` header.
+
+If an external client consumes mutating API endpoints such as `POST /api/tasks`, `PUT /api/tasks/<id>`, or `DELETE /api/tasks/<id>`, it must first establish a session and send the session CSRF token in `X-CSRF-Token`.
 
 ---
 

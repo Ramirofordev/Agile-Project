@@ -59,6 +59,7 @@
         {% endwith %}
 
         <form method = "POST">
+            <input type = "hidden" name = "csrf_token" value = "{{ csrf_token() }}">
             <div class = "mb-3">
                 <input type= "text" name = "identifier" class = "form-control" placeholder = "Trainer Email or Username" required>
             </div>

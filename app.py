@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, abort
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from infraestructure.db import db
 from services.task_service import TaskService
@@ -11,13 +11,15 @@ from infraestructure.repositories.user_repository import UserRepository
 from domain.user import User
 
 import os
+import hmac
+import secrets
 
 
 def create_app(test_config=None):
 
     app = Flask(__name__)
 
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev_key")
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     if test_config:
@@ -25,6 +27,14 @@ def create_app(test_config=None):
     else:
         db_path = os.path.join(os.getcwd(), "kanban.db")
         app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+
+    app.config.setdefault("CSRF_ENABLED", not app.config.get("TESTING", False))
+
+    if not app.config.get("SECRET_KEY"):
+        if not app.config.get("TESTING", False):
+            raise RuntimeError("SECRET_KEY must be set outside testing")
+
+        app.config["SECRET_KEY"] = "dev_key"
 
     db.init_app(app)
 
@@ -46,6 +56,41 @@ def create_app(test_config=None):
     @login_manager.user_loader
     def load_user(user_id):
         return db.session.get(User, int(user_id))
+
+    def generate_csrf_token():
+        token = session.get("csrf_token")
+
+        if not token:
+            token = secrets.token_urlsafe(32)
+            session["csrf_token"] = token
+
+        return token
+
+    def regenerate_csrf_token():
+        token = secrets.token_urlsafe(32)
+        session["csrf_token"] = token
+        return token
+
+    @app.context_processor
+    def inject_csrf_token():
+        return {"csrf_token": generate_csrf_token}
+
+    @app.before_request
+    def validate_csrf_token():
+        if not app.config.get("CSRF_ENABLED", True):
+            return
+
+        if request.method not in {"POST", "PUT", "PATCH", "DELETE"}:
+            return
+
+        expected_token = session.get("csrf_token")
+        submitted_token = request.form.get("csrf_token") or request.headers.get("X-CSRF-Token")
+
+        if not expected_token or not submitted_token:
+            abort(400)
+
+        if not hmac.compare_digest(expected_token, submitted_token):
+            abort(400)
 
     # -------------------------
     # Routes
@@ -122,6 +167,7 @@ def create_app(test_config=None):
                     request.form["password"]
                 )
                 login_user(user)
+                regenerate_csrf_token()
                 return redirect(url_for("index"))
             except ValueError as e:
                 flash(str(e), "danger")
@@ -138,6 +184,7 @@ def create_app(test_config=None):
                     request.form["password"]
                 )
                 login_user(user)
+                regenerate_csrf_token()
                 return redirect(url_for("index"))
             except ValueError as e:
                 flash(str(e), "danger")
@@ -145,10 +192,11 @@ def create_app(test_config=None):
 
         return render_template("pages/login.html")
 
-    @app.route("/logout")
+    @app.route("/logout", methods=["POST"])
     @login_required
     def logout():
         logout_user()
+        regenerate_csrf_token()
         return redirect(url_for("login"))
     
     # -------------------------
@@ -269,13 +317,13 @@ def create_app(test_config=None):
     @app.route("/edit/<int:task_id>", methods=["POST"])
     @login_required
     def edit_task(task_id):
-        task = task_service.get_task(task_id)
-
-        if request.method == "POST":
-
+        try:
             title = request.form["title"]
             description = request.form["description"]
             priority = request.form["priority"]
+
+            if priority not in ["low", "medium", "high"]:
+                raise ValueError("Invalid property")
 
             task_service.edit_task(
                 task_id,
@@ -291,8 +339,9 @@ def create_app(test_config=None):
             )
 
             return redirect(url_for("index"))
-
-        return render_template("pages/edit.html", task = task)
+        except ValueError as e:
+            flash(str(e), "danger")
+            return redirect(url_for("index"))
 
     @app.route("/delete/<int:task_id>", methods = ["POST"])
     @login_required
@@ -330,7 +379,7 @@ def create_app(test_config=None):
         except ValueError:
             pass
 
-        return redirect(url_for("list_contexts"))
+        return redirect(url_for("index"))
 
     # -------------------------
     # Drag & Drop Status Change
