@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     const csrfToken = document.querySelector("meta[name='csrf-token']")?.content || "";
+    const taskForm = document.getElementById("task-form");
+    const isGuest = taskForm?.dataset.guest === "true";
+    const guestStorageKey = "guestKanbanTasks";
     const csrfInput = csrfToken
         ? `<input type="hidden" name="csrf_token" value="${csrfToken}">`
         : "";
@@ -8,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const STATUS_BUTTONS = {
         todo: (id) => `
             <div class="d-grid mb-2">
-                <a href="/edit/${id}" class="btn btn-outline-primary btn-sm">
+                <button type="button" class="btn btn-outline-primary btn-sm task-edit-btn">
                     Edit
-                </a>
+                </button>
             </div>
 
             <form action="/status/${id}/doing" method="post" class="d-grid">
@@ -21,9 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         doing: (id) => `
             <div class="d-grid mb-2">
-                <a href="/edit/${id}" class="btn btn-outline-primary btn-sm">
+                <button type="button" class="btn btn-outline-primary btn-sm task-edit-btn">
                     Edit
-                </a>
+                </button>
             </div>
 
             <form action="/status/${id}/done" method="post" class="d-grid">
@@ -34,9 +37,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         done: (id) => `
             <div class="d-grid mb-2">
-                <a href="/edit/${id}" class="btn btn-outline-primary btn-sm">
+                <button type="button" class="btn btn-outline-primary btn-sm task-edit-btn">
                     Edit
-                </a>
+                </button>
             </div>
 
             <form action="/status/${id}/doing" method="post" class="mb-2 d-grid">
@@ -51,6 +54,92 @@ document.addEventListener("DOMContentLoaded", function () {
         `
     };
 
+    function priorityLabel(priority) {
+        return priority === "high" ? "HIGH" : priority === "medium" ? "MEDIUM" : "LOW";
+    }
+
+    function getGuestTasks() {
+        try {
+            return JSON.parse(localStorage.getItem(guestStorageKey)) || [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveGuestTasks(tasks) {
+        localStorage.setItem(guestStorageKey, JSON.stringify(tasks));
+    }
+
+    function updateEmptyMessage() {
+        const emptyMessage = document.querySelector(".empty-board-message");
+        if (!emptyMessage) return;
+
+        const hasTasks = document.querySelectorAll(".task-card").length > 0;
+        emptyMessage.classList.toggle("hidden", hasTasks);
+    }
+
+    function buildTaskCard(task) {
+        const description = task.description
+            ? `<p class="task-description"></p>`
+            : "";
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "card mb-3 task-card shadow-sm";
+        wrapper.dataset.taskId = task.id;
+        wrapper.dataset.priority = task.priority;
+        wrapper.dataset.description = task.description || "";
+
+        wrapper.innerHTML = `
+            <div class="card-body">
+                <h5></h5>
+                <div class="task-priority priority-${task.priority}">${priorityLabel(task.priority)}</div>
+                ${description}
+                <div class="button-container">
+                    ${STATUS_BUTTONS[task.status](task.id)}
+                </div>
+            </div>
+        `;
+
+        wrapper.querySelector("h5").textContent = task.title;
+
+        const descriptionElement = wrapper.querySelector(".task-description");
+        if (descriptionElement) {
+            descriptionElement.textContent = task.description;
+        }
+
+        return wrapper;
+    }
+
+    function renderGuestTasks() {
+        if (!isGuest) return;
+
+        document.querySelectorAll(".task-list").forEach(list => {
+            list.innerHTML = "";
+        });
+
+        getGuestTasks().forEach(task => {
+            const targetList = document.querySelector(`.task-list[data-status="${task.status}"]`);
+            if (targetList) {
+                targetList.appendChild(buildTaskCard(task));
+            }
+        });
+
+        updateCounters();
+        updateEmptyMessage();
+    }
+
+    function updateGuestTask(taskId, updates) {
+        const tasks = getGuestTasks().map(task => (
+            task.id === taskId ? { ...task, ...updates } : task
+        ));
+
+        saveGuestTasks(tasks);
+    }
+
+    function deleteGuestTask(taskId) {
+        saveGuestTasks(getGuestTasks().filter(task => task.id !== taskId));
+    }
+
     function updateCounters() {
 
         document.querySelectorAll(".task-list").forEach(list => {
@@ -63,6 +152,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             header.textContent = count;
         });
+
+        updateEmptyMessage();
     }
 
     function moveTaskCard(taskElement, newStatus) {
@@ -83,6 +174,10 @@ document.addEventListener("DOMContentLoaded", function () {
             container.innerHTML = STATUS_BUTTONS[newStatus](id);
         }
 
+        if (isGuest) {
+            updateGuestTask(id, { status: newStatus });
+        }
+
         updateCounters();
     }
 
@@ -95,6 +190,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function handleTaskUpdate(taskId, newStatus, taskElement, previousList = null, previousIndex = null) {
+
+        if (isGuest) {
+            moveTaskCard(taskElement, newStatus);
+            taskElement.classList.add("task-complete");
+            setTimeout(() => {
+                taskElement.classList.remove("task-complete");
+            }, 600);
+            return;
+        }
 
         try {
 
@@ -179,6 +283,37 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    taskForm?.addEventListener("submit", function (event) {
+        if (!isGuest) return;
+
+        event.preventDefault();
+
+        const formData = new FormData(taskForm);
+        const title = String(formData.get("title") || "").trim();
+
+        if (!title) return;
+
+        const task = {
+            id: `guest-${Date.now()}`,
+            title,
+            description: String(formData.get("description") || "").trim(),
+            priority: String(formData.get("priority") || "medium"),
+            status: "todo"
+        };
+
+        const tasks = getGuestTasks();
+        tasks.push(task);
+        saveGuestTasks(tasks);
+
+        const targetList = document.querySelector('.task-list[data-status="todo"]');
+        if (targetList) {
+            targetList.appendChild(buildTaskCard(task));
+        }
+
+        taskForm.reset();
+        updateCounters();
+    });
+
     document.addEventListener("submit", async function (e) {
 
         if (!e.target.matches("form[action^='/status/']")) return;
@@ -204,5 +339,94 @@ document.addEventListener("DOMContentLoaded", function () {
             taskElement
         );
     });
+
+    document.addEventListener("submit", async function (event) {
+        if (!event.target.matches("form[action^='/delete/']")) return;
+
+        event.preventDefault();
+
+        const form = event.target;
+        const taskElement = form.closest(".task-card");
+        const taskId = taskElement?.dataset.taskId;
+
+        if (!taskElement || !taskId) return;
+
+        if (isGuest) {
+            deleteGuestTask(taskId);
+            taskElement.remove();
+            updateCounters();
+            return;
+        }
+
+        if (!confirm("Are you sure you want to delete this task?")) return;
+
+        form.submit();
+    });
+
+    document.addEventListener("click", function (event) {
+        const button = event.target.closest(".task-edit-btn");
+        if (!button) return;
+
+        const taskElement = button.closest(".task-card");
+        if (!taskElement) return;
+
+        document.getElementById("edit-task-id").value = taskElement.dataset.taskId;
+        document.getElementById("edit-task-title").value = taskElement.querySelector("h5")?.textContent.trim() || "";
+        document.getElementById("edit-task-description").value = taskElement.dataset.description || "";
+        document.getElementById("edit-task-priority").value = taskElement.dataset.priority || "medium";
+
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("editTaskModal")).show();
+    });
+
+    document.getElementById("edit-task-form")?.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const taskId = document.getElementById("edit-task-id").value;
+        const title = document.getElementById("edit-task-title").value.trim();
+        const description = document.getElementById("edit-task-description").value.trim();
+        const priority = document.getElementById("edit-task-priority").value;
+        const taskElement = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
+
+        if (!title || !taskElement) return;
+
+        if (!isGuest) {
+            const response = await fetch(`/api/tasks/${taskId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
+                },
+                body: JSON.stringify({ title, description, priority })
+            });
+
+            if (!response.ok) return;
+        } else {
+            updateGuestTask(taskId, { title, description, priority });
+        }
+
+        taskElement.querySelector("h5").textContent = title;
+        taskElement.dataset.description = description;
+        taskElement.dataset.priority = priority;
+
+        const oldDescription = taskElement.querySelector(".task-description");
+        if (oldDescription) {
+            oldDescription.remove();
+        }
+
+        if (description) {
+            const descriptionElement = document.createElement("p");
+            descriptionElement.className = "task-description";
+            descriptionElement.textContent = description;
+            taskElement.querySelector(".task-priority").after(descriptionElement);
+        }
+
+        const priorityElement = taskElement.querySelector(".task-priority");
+        priorityElement.className = `task-priority priority-${priority}`;
+        priorityElement.textContent = priorityLabel(priority);
+
+        bootstrap.Modal.getInstance(document.getElementById("editTaskModal"))?.hide();
+    });
+
+    renderGuestTasks();
 
 });

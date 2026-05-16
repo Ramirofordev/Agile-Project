@@ -1436,6 +1436,142 @@ h5,
     box-shadow: 0 0 0 4px rgba(217, 50, 50, 0.12);
 }
 
+.flash-stack {
+    max-width: 960px;
+    margin-inline: auto;
+}
+
+.guest-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    max-width: 1120px;
+    margin-inline: auto;
+    padding: clamp(18px, 3vw, 28px);
+    color: var(--app-ink);
+    background:
+        linear-gradient(120deg, rgba(255, 250, 240, 0.94), rgba(255, 250, 240, 0.82)),
+        linear-gradient(90deg, var(--app-amber) 0 8px, transparent 8px);
+    border: 1px solid var(--app-line);
+    border-radius: var(--app-radius);
+    box-shadow: var(--app-shadow-soft);
+}
+
+.guest-banner h2 {
+    margin: 4px 0 8px;
+    font-size: clamp(1.45rem, 3vw, 2.25rem);
+    color: var(--app-ink);
+}
+
+.guest-banner p {
+    max-width: 720px;
+    margin: 0;
+    color: var(--app-ink-soft);
+    font-weight: 700;
+}
+
+.guest-kicker {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(243, 182, 31, 0.22);
+    color: #805500;
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.guest-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.guest-pill,
+.guest-note {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(31, 154, 138, 0.14);
+    color: #14695f;
+    font-weight: 800;
+    font-size: 0.84rem;
+}
+
+.guest-note {
+    color: #fff4d1;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.edit-task-modal,
+.profile-edit-modal {
+    color: var(--app-ink);
+    background:
+        linear-gradient(180deg, rgba(255, 250, 240, 0.98), rgba(247, 242, 232, 0.96)),
+        repeating-linear-gradient(90deg, transparent 0 26px, rgba(23, 32, 42, 0.035) 26px 27px);
+    border: 1px solid var(--app-line);
+    border-top: 5px solid var(--app-red);
+    border-radius: var(--app-radius);
+    box-shadow: 0 25px 80px rgba(23, 32, 42, 0.28);
+}
+
+.edit-task-modal .modal-title,
+.profile-edit-modal .modal-title {
+    color: var(--app-ink);
+    font-weight: 800;
+}
+
+.trainer-bio {
+    max-width: 620px;
+    margin-top: 8px !important;
+    color: rgba(255, 255, 255, 0.86) !important;
+}
+
+.trainer-focus-chip,
+.trainer-resource-link {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 10px;
+    margin-right: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.trainer-focus-chip {
+    background: rgba(255, 244, 209, 0.18);
+    color: #fff4d1;
+}
+
+.trainer-resource-link {
+    background: rgba(255, 250, 240, 0.92);
+    color: var(--app-red-dark);
+    text-decoration: none;
+}
+
+.trainer-resource-link:hover {
+    color: var(--app-ink);
+}
+
+.trainer-actions {
+    align-self: flex-start;
+}
+
+.trainer-avatar {
+    overflow: hidden;
+}
+
+.trainer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 @media (max-width: 992px) {
     .trainer-header {
         align-items: flex-start;
@@ -1443,6 +1579,17 @@ h5,
 
     .pokemon-grid {
         grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .guest-banner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .trainer-actions {
+        margin-left: 0 !important;
     }
 }
 

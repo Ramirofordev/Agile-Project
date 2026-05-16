@@ -27,7 +27,7 @@
 
         <div class = "card mb-4 shadow-sm">
             <div class = "card-body">
-                <form action = "/add" method = "post" class = "row g-2">
+                <form action = "/add" method = "post" class = "row g-2" id = "task-form" data-guest = "{{ 'true' if is_guest else 'false' }}">
                     <input type = "hidden" name = "csrf_token" value = "{{ csrf_token() }}">
 
                     <div class = "col-12 col-md-4">
@@ -38,6 +38,7 @@
                         <input type = "text" name = "description" class = "form-control" placeholder = "Description">
                     </div>
 
+                    {% if not is_guest %}
                     <div class = "col-12 col-md-2">
                         <select name = "project_id" class = "form-select">
                             <option value = "">No Project</option>
@@ -55,6 +56,18 @@
                             {% endfor %}
                         </select>
                     </div>
+                    {% else %}
+                    <div class = "col-12 col-md-2">
+                        <select name = "priority" class = "form-select">
+                            <option value = "low">Low</option>
+                            <option value = "medium" selected>Medium</option>
+                            <option value = "high">High</option>
+                        </select>
+                    </div>
+                    <div class = "col-12 col-md-2 d-flex align-items-center">
+                        <span class = "guest-pill">Local only</span>
+                    </div>
+                    {% endif %}
 
                     <div class = "col-12 text-center mt-2">
                         <button type = "submit" class = "btn btn-primary px-5">Add Task</button>
@@ -64,7 +77,7 @@
         </div>
 
         {% if not tasks %}
-            <div class = "text-center mt-4 mb-4">
+            <div class = "text-center mt-4 mb-4 empty-board-message">
                 <h5>No tasks found with current filters</h5>
             </div>
         {% endif %}
@@ -79,7 +92,7 @@
 
                     <div class = "card-body task-list" data-status = "todo">
                         {% for task in tasks if task.status == "todo" %}
-                        <div class = "card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}">
+                        <div class = "card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}" data-priority = "{{ task.priority }}" data-description = "{{ task.description }}">
                             <div class = "card-body">
                                 <h5>{{ task.title }}</h5>
 
@@ -111,9 +124,9 @@
 
                                 <div class = "button-container">
                                     <div class = "d-grid mb-2">
-                                        <a href = "/edit/{{ task.id }}" class = "btn btn-outline-primary btn-sm">
+                                        <button type = "button" class = "btn btn-outline-primary btn-sm task-edit-btn">
                                             Edit
-                                        </a>
+                                        </button>
                                     </div>
 
                                     <form action = "/status/{{ task.id }}/doing" method = "post" class = "d-grid">
@@ -136,7 +149,7 @@
 
                     <div class = "card-body task-list" data-status = "doing">
                         {% for task in tasks if task.status == "doing" %}
-                        <div class = "card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}">
+                        <div class = "card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}" data-priority = "{{ task.priority }}" data-description = "{{ task.description }}">
                             <div class = "card-body">
                                 <h5>{{ task.title }}</h5>
 
@@ -168,9 +181,9 @@
 
                                 <div class = "button-container">
                                     <div class = "d-grid mb-2">
-                                        <a href = "/edit/{{ task.id }}" class = "btn btn-outline-primary btn-sm">
+                                        <button type = "button" class = "btn btn-outline-primary btn-sm task-edit-btn">
                                             Edit
-                                        </a>
+                                        </button>
                                     </div>
 
                                     <form action = "/status/{{ task.id }}/done" method = "post" class = "d-grid">
@@ -193,7 +206,7 @@
 
                     <div class = "card-body task-list" data-status = "done">
                         {% for task in tasks if task.status == "done" %}
-                        <div class = "card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}">
+                        <div class = "card mb-3 task-card shadow-sm" data-task-id = "{{ task.id }}" data-priority = "{{ task.priority }}" data-description = "{{ task.description }}">
                             <div class = "card-body">
                                 <h5>{{ task.title }}</h5>
 
@@ -225,9 +238,9 @@
 
                                 <div class = "button-container">
                                     <div class = "d-grid mb-2">
-                                        <a href = "/edit/{{ task.id }}" class = "btn btn-outline-primary btn-sm">
+                                        <button type = "button" class = "btn btn-outline-primary btn-sm task-edit-btn">
                                             Edit
-                                        </a>
+                                        </button>
                                     </div>
 
                                     <form action = "/status/{{ task.id }}/doing" method = "post" class = "mb-2 d-grid">
@@ -249,6 +262,50 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<div class = "modal fade" id = "editTaskModal" tabindex = "-1">
+    <div class = "modal-dialog modal-dialog-centered">
+        <div class = "modal-content edit-task-modal">
+            <div class = "modal-header">
+                <div>
+                    <span class = "guest-kicker">Task editor</span>
+                    <h5 class = "modal-title">Tune this task without leaving the board</h5>
+                </div>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal"></button>
+            </div>
+
+            <form id = "edit-task-form">
+                <div class = "modal-body">
+                    <input type = "hidden" name = "task_id" id = "edit-task-id">
+
+                    <div class = "mb-3">
+                        <label class = "form-label">Title</label>
+                        <input type = "text" name = "title" id = "edit-task-title" class = "form-control" required>
+                    </div>
+
+                    <div class = "mb-3">
+                        <label class = "form-label">Description</label>
+                        <textarea name = "description" id = "edit-task-description" class = "form-control" rows = "3"></textarea>
+                    </div>
+
+                    <div class = "mb-3">
+                        <label class = "form-label">Priority</label>
+                        <select name = "priority" id = "edit-task-priority" class = "form-select">
+                            <option value = "low">Low</option>
+                            <option value = "medium">Medium</option>
+                            <option value = "high">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class = "modal-footer">
+                    <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Cancel</button>
+                    <button type = "submit" class = "btn btn-primary">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

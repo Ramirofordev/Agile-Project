@@ -14,14 +14,36 @@ import os
 import hmac
 import secrets
 import time
+import uuid
 from sqlalchemy import inspect, text
+from werkzeug.utils import secure_filename
 
 
 def ensure_schema():
     db.create_all()
 
     inspector = inspect(db.engine)
-    if "tasks" not in inspector.get_table_names():
+    table_names = inspector.get_table_names()
+
+    if "users" in table_names:
+        user_columns = {column["name"] for column in inspector.get_columns("users")}
+        user_schema_updates = {
+            "display_name": "VARCHAR(100)",
+            "bio": "VARCHAR(500)",
+            "avatar_filename": "VARCHAR(255)",
+            "focus_goal": "VARCHAR(200)",
+            "resource_label": "VARCHAR(80)",
+            "resource_url": "VARCHAR(300)"
+        }
+
+        with db.engine.begin() as connection:
+            for column_name, column_type in user_schema_updates.items():
+                if column_name not in user_columns:
+                    connection.execute(
+                        text(f"ALTER TABLE users ADD COLUMN {column_name} {column_type}")
+                    )
+
+    if "tasks" not in table_names:
         return
 
     task_columns = {column["name"] for column in inspector.get_columns("tasks")}
@@ -42,6 +64,7 @@ def create_app(test_config=None):
 
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["AVATAR_UPLOAD_FOLDER"] = os.path.join(app.root_path, "static", "uploads", "avatars")
 
     if test_config:
         app.config.update(test_config)
@@ -118,8 +141,20 @@ def create_app(test_config=None):
     # -------------------------
 
     @app.route("/")
-    @login_required
     def index():
+        if not current_user.is_authenticated:
+            return render_template(
+                "pages/dashboard.html",
+                tasks = [],
+                projects = [],
+                contexts = [],
+                user = None,
+                active_project = None,
+                active_context = None,
+                next_level_xp = None,
+                is_guest = True
+            )
+
         project_id = request.args.get("project")
         context_id = request.args.get("context")
 
@@ -150,7 +185,8 @@ def create_app(test_config=None):
             user = current_user,
             active_project = project_id,
             active_context = context_id,
-            next_level_xp = user_progress_service.xp_needed_for_next_level(current_user.level)
+            next_level_xp = user_progress_service.xp_needed_for_next_level(current_user.level),
+            is_guest = False
         )
     
     @app.route("/profile")
@@ -174,6 +210,38 @@ def create_app(test_config=None):
             total_pokemon = profile_service.TOTAL_POKEMON,
             achievements = achievements
         )
+
+    @app.route("/profile/edit", methods=["POST"])
+    @login_required
+    def edit_profile():
+        try:
+            avatar_file = request.files.get("avatar")
+            profile_service.validate_avatar(avatar_file)
+
+            profile_service.update_profile(
+                current_user,
+                request.form.get("display_name", ""),
+                request.form.get("bio", ""),
+                request.form.get("focus_goal", ""),
+                request.form.get("resource_label", ""),
+                request.form.get("resource_url", "")
+            )
+
+            if avatar_file and avatar_file.filename:
+                os.makedirs(app.config["AVATAR_UPLOAD_FOLDER"], exist_ok=True)
+                extension = avatar_file.filename.rsplit(".", 1)[-1].lower()
+                filename = secure_filename(f"user-{current_user.id}-{uuid.uuid4().hex}.{extension}")
+                avatar_file.save(os.path.join(app.config["AVATAR_UPLOAD_FOLDER"], filename))
+                current_user.avatar_filename = filename
+
+            db.session.commit()
+            flash("Profile updated", "success")
+
+        except ValueError as e:
+            db.session.rollback()
+            flash(str(e), "danger")
+
+        return redirect(url_for("profile"))
 
     # -------------------------
     # Authentication

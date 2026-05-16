@@ -2,11 +2,29 @@
 
 {% block content %}
 
-    {% include "components/xp_bar.html" %}
+    {% if is_guest %}
+        <div class = "guest-banner mt-4 mb-4">
+            <div>
+                <span class = "guest-kicker">Guest workspace</span>
+                <h2>Plan now. Save locally. Create an account when you want rewards.</h2>
+                <p>Your guest tasks and Pomodoro state stay in this browser only. XP, Pokemon, projects, and profile features require an account.</p>
+            </div>
+            <div class = "guest-actions">
+                <a href = "{{ url_for('register') }}" class = "btn btn-primary">Create Account</a>
+                <a href = "{{ url_for('login') }}" class = "btn btn-outline-primary">Login</a>
+            </div>
+        </div>
+    {% else %}
+        {% include "components/xp_bar.html" %}
+    {% endif %}
     {% include "components/pomodoro.html" %}
-    {% include "components/modals.html" %}
-    {% include "components/task_filters.html" %}
+    {% if not is_guest %}
+        {% include "components/modals.html" %}
+        {% include "components/task_filters.html" %}
+    {% endif %}
     {% include "components/kanban_board.html" %}
-    {% include "components/capture_overlay.html" %}
+    {% if not is_guest %}
+        {% include "components/capture_overlay.html" %}
+    {% endif %}
 
 {% endblock %}

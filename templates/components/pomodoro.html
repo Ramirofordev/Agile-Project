@@ -1,4 +1,4 @@
-<div class = "pomodoro-wrapper text-center mb-5">
+<div class = "pomodoro-wrapper text-center mb-5" data-guest = "{{ 'true' if is_guest else 'false' }}">
 
     <h3 class = "mb-3">Focus Mode</h3>
 
@@ -44,4 +44,10 @@
     <div class = "mt-3">
         Cycles completed: <span id = "cycle-count">0</span>
     </div>
+
+    {% if is_guest %}
+        <p class = "guest-note mt-3 mb-0">
+            Guest Pomodoro cycles are stored only in this browser.
+        </p>
+    {% endif %}
 </div>

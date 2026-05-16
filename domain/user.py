@@ -14,6 +14,13 @@ class User(UserMixin, db.Model):
     pomodoro_sessions_completed = db.Column(db.Integer, default = 0)
     tasks_completed = db.Column(db.Integer, default = 0)
 
+    display_name = db.Column(db.String(100), nullable = True)
+    bio = db.Column(db.String(500), nullable = True)
+    avatar_filename = db.Column(db.String(255), nullable = True)
+    focus_goal = db.Column(db.String(200), nullable = True)
+    resource_label = db.Column(db.String(80), nullable = True)
+    resource_url = db.Column(db.String(300), nullable = True)
+
     tasks = db.relationship("Task", backref= "owner", lazy = True)
     pokemons = db.relationship("Pokemon", backref = "owner", lazy = True)
 

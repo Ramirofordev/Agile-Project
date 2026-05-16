@@ -50,12 +50,12 @@ def test_user_registration_and_login(client):
 
     assert response.status_code == 200
 
-def test_board_requires_authentication(client):
+def test_board_allows_guest_workspace(client):
     response = client.get("/", follow_redirects = False)
 
-    # Should redirect to login
-    assert response.status_code == 302
-    assert "/login" in response.location
+    assert response.status_code == 200
+    assert b"Guest workspace" in response.data
+    assert b"Register" in response.data
 
 # ----------------------
 # Ownership tests

@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from io import BytesIO
 
 import requests
 from werkzeug.security import generate_password_hash
@@ -156,3 +157,110 @@ def test_pomodoro_endpoint_is_rate_limited():
 
     assert first.status_code == 200
     assert second.status_code == 429
+
+
+def test_dashboard_is_available_to_guests_without_creating_user_data():
+    app = make_app()
+
+    with app.app_context():
+        db.create_all()
+
+    client = app.test_client()
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"Guest workspace" in response.data
+    assert b"Create Account" in response.data
+
+    with app.app_context():
+        assert User.query.count() == 0
+
+
+def test_guest_cannot_access_persistent_pomodoro_endpoint():
+    app = make_app()
+
+    with app.app_context():
+        db.create_all()
+
+    client = app.test_client()
+
+    response = client.post("/api/pomodoro/complete")
+
+    assert response.status_code == 302
+    assert "/login" in response.location
+
+
+def test_profile_update_saves_productivity_resource():
+    app = make_app()
+
+    with app.app_context():
+        create_user()
+
+    client = app.test_client()
+    login(client)
+
+    response = client.post("/profile/edit", data = {
+        "display_name": "Sprint Trainer",
+        "bio": "Working through the sprint backlog.",
+        "focus_goal": "Finish sprint review",
+        "resource_label": "Planning notes",
+        "resource_url": "https://example.com/notes"
+    }, follow_redirects = True)
+
+    assert response.status_code == 200
+
+    with app.app_context():
+        user = User.query.filter_by(email = "trainer@test.com").first()
+        assert user.display_name == "Sprint Trainer"
+        assert user.resource_label == "Planning notes"
+        assert user.resource_url == "https://example.com/notes"
+
+
+def test_profile_update_rejects_blocked_language():
+    app = make_app()
+
+    with app.app_context():
+        create_user()
+
+    client = app.test_client()
+    login(client)
+
+    response = client.post("/profile/edit", data = {
+        "display_name": "Clean name",
+        "bio": "This is mierda",
+        "focus_goal": "",
+        "resource_label": "",
+        "resource_url": ""
+    }, follow_redirects = True)
+
+    assert response.status_code == 200
+
+    with app.app_context():
+        user = User.query.filter_by(email = "trainer@test.com").first()
+        assert user.bio is None
+
+
+def test_profile_update_rejects_invalid_avatar_extension():
+    app = make_app()
+
+    with app.app_context():
+        create_user()
+
+    client = app.test_client()
+    login(client)
+
+    response = client.post("/profile/edit", data = {
+        "display_name": "Trainer",
+        "bio": "",
+        "focus_goal": "",
+        "resource_label": "",
+        "resource_url": "",
+        "avatar": (BytesIO(b"not an image"), "avatar.txt")
+    }, content_type = "multipart/form-data", follow_redirects = True)
+
+    assert response.status_code == 200
+
+    with app.app_context():
+        user = User.query.filter_by(email = "trainer@test.com").first()
+        assert user.avatar_filename is None

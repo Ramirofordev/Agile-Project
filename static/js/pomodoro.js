@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const csrfToken =
         document.querySelector("meta[name='csrf-token']")?.getAttribute("content") || "";
+    const isGuest = document.querySelector(".pomodoro-wrapper")?.dataset.guest === "true";
+    const storageKey = isGuest ? "guestPomodoroState" : "pomodoroState";
 
     const phases = [
         { type: "focus", duration: 25 },
@@ -67,6 +69,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function completeFocusPhase() {
+
+        if (isGuest) {
+            const sound = new Audio("/static/sounds/complete_cycle.mp3");
+            sound.play().catch(()=>{});
+            return;
+        }
 
         const csrfToken = document.querySelector("meta[name='csrf-token']")?.content || "";
 
@@ -157,12 +165,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         cycleDisplay.textContent = 0;
 
-        localStorage.removeItem("pomodoroState");
+        localStorage.removeItem(storageKey);
     }
 
     function saveState() {
 
-        localStorage.setItem("pomodoroState", JSON.stringify({
+        localStorage.setItem(storageKey, JSON.stringify({
             currentPhaseIndex,
             remainingTime,
             cyclesCompleted
@@ -171,8 +179,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadState() {
 
-        const saved = localStorage.getItem("pomodoroState");
-        if (!saved) return;
+        const saved = localStorage.getItem(storageKey);
+        if (!saved) return false;
 
         const state = JSON.parse(saved);
 
@@ -187,16 +195,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const total = phases[currentPhaseIndex].duration * 60;
         setProgress(remainingTime / total);
+
+        return true;
     }
 
     document.getElementById("pomodoro-start").addEventListener("click", start);
     document.getElementById("pomodoro-pause").addEventListener("click", pause);
     document.getElementById("pomodoro-reset").addEventListener("click", reset);
 
-    loadState();
-    updateDisplay();
-    applyPhaseStyle("focus");
-    setProgress(1);
+    if (!loadState()) {
+        updateDisplay();
+        applyPhaseStyle("focus");
+        setProgress(1);
+    }
 
     focusSelect.addEventListener("change", function() {
 

@@ -7,12 +7,33 @@
     <div class = "trainer-card">
         <div class = "trainer-header">
             <div class = "trainer-avatar">
-                <img src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt = "Pokeball">
+                {% if user.avatar_filename %}
+                    <img src = "{{ url_for('static', filename = 'uploads/avatars/' ~ user.avatar_filename) }}" alt = "Trainer avatar">
+                {% else %}
+                    <img src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt = "Pokeball">
+                {% endif %}
             </div>
 
             <div class = "trainer-info">
-                <h2>{{ current_user.username }}</h2>
+                <h2>{{ user.display_name or current_user.username }}</h2>
                 <p>Trainer Level {{ user.level }}</p>
+                {% if user.bio %}
+                    <p class = "trainer-bio">{{ user.bio }}</p>
+                {% endif %}
+                {% if user.focus_goal %}
+                    <span class = "trainer-focus-chip">Focus goal: {{ user.focus_goal }}</span>
+                {% endif %}
+                {% if user.resource_url %}
+                    <a href = "{{ user.resource_url }}" class = "trainer-resource-link" target = "_blank" rel = "noopener noreferrer">
+                        {{ user.resource_label or "Trainer resource" }}
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class = "trainer-actions ms-auto">
+                <button type = "button" class = "btn btn-warning" data-bs-toggle = "modal" data-bs-target = "#editProfileModal">
+                    Customize Profile
+                </button>
             </div>
         </div>
 
@@ -40,6 +61,65 @@
             <div class = "col">
                 <h6>Legendary</h6>
                 <h3>{{ legendary }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class = "modal fade" id = "editProfileModal" tabindex = "-1">
+        <div class = "modal-dialog modal-dialog-centered modal-lg">
+            <div class = "modal-content profile-edit-modal">
+                <div class = "modal-header">
+                    <div>
+                        <span class = "guest-kicker">Trainer identity</span>
+                        <h5 class = "modal-title">Customize your profile</h5>
+                    </div>
+                    <button type = "button" class = "btn-close" data-bs-dismiss = "modal"></button>
+                </div>
+
+                <form action = "{{ url_for('edit_profile') }}" method = "post" enctype = "multipart/form-data">
+                    <input type = "hidden" name = "csrf_token" value = "{{ csrf_token() }}">
+
+                    <div class = "modal-body">
+                        <div class = "row g-3">
+                            <div class = "col-md-6">
+                                <label class = "form-label">Display name</label>
+                                <input type = "text" name = "display_name" class = "form-control" value = "{{ user.display_name or '' }}" maxlength = "100">
+                            </div>
+
+                            <div class = "col-md-6">
+                                <label class = "form-label">Avatar</label>
+                                <input type = "file" name = "avatar" class = "form-control" accept = "image/png,image/jpeg,image/webp">
+                                <div class = "form-text">PNG, JPG, JPEG, or WEBP. Max 2 MB.</div>
+                            </div>
+
+                            <div class = "col-12">
+                                <label class = "form-label">Bio</label>
+                                <textarea name = "bio" class = "form-control" rows = "3" maxlength = "500" placeholder = "Describe your trainer style, motivation, or current sprint.">{{ user.bio or '' }}</textarea>
+                            </div>
+
+                            <div class = "col-md-6">
+                                <label class = "form-label">Focus goal</label>
+                                <input type = "text" name = "focus_goal" class = "form-control" value = "{{ user.focus_goal or '' }}" maxlength = "200" placeholder = "Finish sprint backlog, study Python, etc.">
+                            </div>
+
+                            <div class = "col-md-6">
+                                <label class = "form-label">Productivity resource name</label>
+                                <input type = "text" name = "resource_label" class = "form-control" value = "{{ user.resource_label or '' }}" maxlength = "80" placeholder = "Sprint board, notes, focus playlist">
+                            </div>
+
+                            <div class = "col-12">
+                                <label class = "form-label">Productivity resource link</label>
+                                <input type = "url" name = "resource_url" class = "form-control" value = "{{ user.resource_url or '' }}" maxlength = "300" placeholder = "https://...">
+                                <div class = "form-text">Instead of calendar sync, this keeps the profile aligned with the app: link a board, notes, playlist, or planning resource.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class = "modal-footer">
+                        <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Cancel</button>
+                        <button type = "submit" class = "btn btn-primary">Save Profile</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
