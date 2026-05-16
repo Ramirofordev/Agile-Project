@@ -13,6 +13,27 @@ from domain.user import User
 import os
 import hmac
 import secrets
+import time
+from sqlalchemy import inspect, text
+
+
+def ensure_schema():
+    db.create_all()
+
+    inspector = inspect(db.engine)
+    if "tasks" not in inspector.get_table_names():
+        return
+
+    task_columns = {column["name"] for column in inspector.get_columns("tasks")}
+    if "reward_claimed" not in task_columns:
+        default_value = "0" if db.engine.dialect.name == "sqlite" else "false"
+
+        with db.engine.begin() as connection:
+            connection.execute(
+                text(
+                    f"ALTER TABLE tasks ADD COLUMN reward_claimed BOOLEAN DEFAULT {default_value} NOT NULL"
+                )
+            )
 
 
 def create_app(test_config=None):
@@ -128,7 +149,8 @@ def create_app(test_config=None):
             contexts = contexts,
             user = current_user,
             active_project = project_id,
-            active_context = context_id
+            active_context = context_id,
+            next_level_xp = user_progress_service.xp_needed_for_next_level(current_user.level)
         )
     
     @app.route("/profile")
@@ -196,6 +218,7 @@ def create_app(test_config=None):
     @login_required
     def logout():
         logout_user()
+        session.clear()
         regenerate_csrf_token()
         return redirect(url_for("login"))
     
@@ -417,7 +440,15 @@ def create_app(test_config=None):
     @app.route("/api/pomodoro/complete", methods = ["POST"])
     @login_required
     def complete_pomodoro():
+        now = time.time()
+        min_seconds = app.config.get("POMODORO_MIN_SECONDS", 20 * 60)
+        last_completed_at = session.get("last_pomodoro_completed_at")
+
+        if last_completed_at and now - last_completed_at < min_seconds:
+            return jsonify({"error": "Pomodoro completed too recently"}), 429
+
         xp_gained = user_progress_service.register_pomodoro_completion(current_user)
+        session["last_pomodoro_completed_at"] = now
 
         return jsonify({
             "xp_gained": xp_gained,
@@ -509,11 +540,21 @@ def create_app(test_config=None):
                 )
 
             if "title" in data:
+                current_task = task_service.get_task(task_id)
+                if not current_task:
+                    raise ValueError("Task not found")
+
+                description = (
+                    data["description"]
+                    if "description" in data
+                    else current_task.description
+                )
+
                 task_service.edit_task(
                     task_id,
                     data["title"],
                     current_user.id,
-                    data.get("description", "")
+                    description
                 )
                 
 
@@ -539,7 +580,7 @@ def create_app(test_config=None):
             return jsonify({"error": "Task not found"}), 404
         
     with app.app_context():
-        db.create_all()
+        ensure_schema()
 
     return app
 
@@ -550,7 +591,7 @@ def create_app(test_config=None):
 if __name__ == "__main__":
     app = create_app()
     with app.app_context():
-        db.create_all()
+        ensure_schema()
     
     port = int(os.environ.get("PORT", 5000))
 

@@ -26,5 +26,8 @@ class ContextService:
 
         if not context or context.user_id != user_id:
             raise ValueError("Context not found")
+
+        for task in context.tasks:
+            task.context_id = None
         
         return self.repository.delete(context_id)

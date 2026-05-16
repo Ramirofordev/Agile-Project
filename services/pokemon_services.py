@@ -30,7 +30,7 @@ class PokemonService:
             random_id = random.choice(available)
         
         try:
-            response = requests.get(f"{self.base_url}{random_id}", timeout=5)
+            response = requests.get(f"{self.base_url}{random_id}", timeout = 5)
         except requests.RequestException:
             return None
 
@@ -47,7 +47,7 @@ class PokemonService:
                 if is_shiny
                 else data["sprites"]["front_default"]
             )
-        except (ValueError, KeyError, TypeError):
+        except (KeyError, TypeError, ValueError):
             return None
 
         return {
@@ -59,7 +59,7 @@ class PokemonService:
         }
 
 
-    def assign_random_pokemon_to_user(self, user_id: int, user_level: int):
+    def assign_random_pokemon_to_user(self, user_id: int, user_level: int, commit: bool = True):
         """
         Create and save the pokemon for the user
         """
@@ -100,7 +100,7 @@ class PokemonService:
             user_id=user_id
         )
 
-        self.repository.add(new_pokemon)
+        self.repository.add(new_pokemon, commit = commit)
 
         return new_pokemon
 

@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const xp = parseInt(bar.dataset.xp);
     const next = parseInt(bar.dataset.next);
 
-    const percent = (xp / next) * 100;
+    const percent = Math.min((xp / next) * 100, 100);
 
     bar.style.width = percent + "%";
 
@@ -21,9 +21,10 @@ function updateXPBar(totalXP, nextLevelXP, level){
 
     if(!bar) return;
 
-    const percent = (totalXP / nextLevelXP) * 100;
+    const percent = Math.min((totalXP / nextLevelXP) * 100, 100);
 
     bar.style.width = percent + "%";
+    bar.classList.add("xp-gain");
 
     setTimeout(() => {
         bar.classList.remove("xp-gain");

@@ -15,6 +15,7 @@ class Task(db.Model):
     priority = db.Column(db.String(20), default = "medium")
     created_at = db.Column(db.DateTime, default = utc_now)
     manual_priority = db.Column(db.Boolean, default = False)
+    reward_claimed = db.Column(db.Boolean, default = False, nullable = False)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable = True)

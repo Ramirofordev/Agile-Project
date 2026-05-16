@@ -8,6 +8,7 @@ __pycache__/
 
 # Flask
 instance/
+*.db
 
 # IDEs
 .vscode/
