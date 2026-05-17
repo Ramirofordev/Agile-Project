@@ -19,6 +19,22 @@ from sqlalchemy import inspect, text
 from werkzeug.utils import secure_filename
 
 
+def normalize_database_url(database_url):
+    if not database_url:
+        return database_url
+
+    if database_url.startswith("postgresql+psycopg://"):
+        return database_url
+
+    if database_url.startswith("postgresql://"):
+        return database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
+    if database_url.startswith("postgres://"):
+        return database_url.replace("postgres://", "postgresql+psycopg://", 1)
+
+    return database_url
+
+
 def ensure_schema():
     db.create_all()
 
@@ -66,13 +82,19 @@ def create_app(test_config=None):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["AVATAR_UPLOAD_FOLDER"] = os.path.join(app.root_path, "static", "uploads", "avatars")
 
-    if test_config:
-        app.config.update(test_config)
+    database_url = normalize_database_url(os.environ.get("DATABASE_URL"))
+
+    if database_url:
+        app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     else:
         db_path = os.path.join(os.getcwd(), "kanban.db")
         app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 
+    if test_config:
+        app.config.update(test_config)
+
     app.config.setdefault("CSRF_ENABLED", not app.config.get("TESTING", False))
+    app.config.setdefault("AUTO_ENSURE_SCHEMA", True)
 
     if not app.config.get("SECRET_KEY"):
         if not app.config.get("TESTING", False):
@@ -647,8 +669,9 @@ def create_app(test_config=None):
         except ValueError:
             return jsonify({"error": "Task not found"}), 404
         
-    with app.app_context():
-        ensure_schema()
+    if app.config.get("AUTO_ENSURE_SCHEMA", True):
+        with app.app_context():
+            ensure_schema()
 
     return app
 
